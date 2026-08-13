@@ -24,14 +24,14 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/proto/waHistorySync"
-	"github.com/polymorfa/hypermeow/proto/waMediaTransport"
-	"github.com/polymorfa/hypermeow/proto/waServerSync"
-	"github.com/polymorfa/hypermeow/socket"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/util/cbcutil"
-	"github.com/polymorfa/hypermeow/util/hkdfutil"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/proto/waHistorySync"
+	"github.com/nocodeleaks/whatsfuck/proto/waMediaTransport"
+	"github.com/nocodeleaks/whatsfuck/proto/waServerSync"
+	"github.com/nocodeleaks/whatsfuck/socket"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/util/cbcutil"
+	"github.com/nocodeleaks/whatsfuck/util/hkdfutil"
 )
 
 // MediaType represents a type of uploaded file on WhatsApp.

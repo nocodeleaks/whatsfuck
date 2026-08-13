@@ -5,8 +5,8 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/polymorfa/hypermeow/binary/token"
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/binary/token"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 type binaryEncoder struct {

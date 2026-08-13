@@ -14,18 +14,18 @@ import (
 
 	"go.mau.fi/util/jsontime"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	armadillo "github.com/polymorfa/hypermeow/proto"
-	"github.com/polymorfa/hypermeow/proto/instamadilloTransportPayload"
-	"github.com/polymorfa/hypermeow/proto/waArmadilloApplication"
-	"github.com/polymorfa/hypermeow/proto/waCompanionReg"
-	"github.com/polymorfa/hypermeow/proto/waConsumerApplication"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/proto/waHistorySync"
-	"github.com/polymorfa/hypermeow/proto/waMsgApplication"
-	"github.com/polymorfa/hypermeow/proto/waMsgTransport"
-	"github.com/polymorfa/hypermeow/proto/waWeb"
-	"github.com/polymorfa/hypermeow/types"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	armadillo "github.com/nocodeleaks/whatsfuck/proto"
+	"github.com/nocodeleaks/whatsfuck/proto/instamadilloTransportPayload"
+	"github.com/nocodeleaks/whatsfuck/proto/waArmadilloApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waCompanionReg"
+	"github.com/nocodeleaks/whatsfuck/proto/waConsumerApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/proto/waHistorySync"
+	"github.com/nocodeleaks/whatsfuck/proto/waMsgApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waMsgTransport"
+	"github.com/nocodeleaks/whatsfuck/proto/waWeb"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 // QR is emitted after connecting when there's no session data in the device store.
@@ -60,6 +60,30 @@ type PairError struct {
 	Platform     string
 	Props        *waCompanionReg.ClientPairingProps
 	Error        error
+}
+
+// PairCodeErrorReason identifies why phone-number pairing did not complete.
+// It deliberately does not represent account bans or reach-out restrictions,
+// which are reported through their own server events.
+type PairCodeErrorReason string
+
+const (
+	PairCodeErrorUnknown              PairCodeErrorReason = "unknown"
+	PairCodeErrorRefreshRequired      PairCodeErrorReason = "refresh_required"
+	PairCodeErrorInvalidOrExpiredCode PairCodeErrorReason = "invalid_or_expired_code"
+	PairCodeErrorNoPendingPairing     PairCodeErrorReason = "no_pending_pairing"
+	PairCodeErrorProtocol             PairCodeErrorReason = "protocol_error"
+)
+
+// PairCodeError is emitted when the phone responds to a pair code but the
+// linking handshake cannot continue. Retryable means callers may offer a new
+// code; the library never retries automatically to avoid WhatsApp rate limits.
+type PairCodeError struct {
+	Reason             PairCodeErrorReason
+	Stage              string
+	Retryable          bool
+	ForceManualRefresh bool
+	Error              error
 }
 
 // PairPasskeyRequest is emitted when the pairing requires a passkey.

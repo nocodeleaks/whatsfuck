@@ -636,7 +636,7 @@ const file_waDeviceCapabilities_WAWebProtobufsDeviceCapabilities_proto_rawDesc =
 	"\x14ChatLockSupportLevel\x12\b\n" +
 	"\x04NONE\x10\x00\x12\v\n" +
 	"\aMINIMAL\x10\x01\x12\b\n" +
-	"\x04FULL\x10\x02B;Z9github.com/polymorfa/hypermeow/proto/waDeviceCapabilities"
+	"\x04FULL\x10\x02B=Z;github.com/nocodeleaks/whatsfuck/proto/waDeviceCapabilities"
 
 var (
 	file_waDeviceCapabilities_WAWebProtobufsDeviceCapabilities_proto_rawDescOnce sync.Once

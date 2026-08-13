@@ -27,15 +27,15 @@ import (
 	"go.mau.fi/util/random"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/polymorfa/hypermeow/appstate"
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/proto/waHistorySync"
-	"github.com/polymorfa/hypermeow/proto/waLidMigrationSyncPayload"
-	"github.com/polymorfa/hypermeow/proto/waWeb"
-	"github.com/polymorfa/hypermeow/store"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
+	"github.com/nocodeleaks/whatsfuck/appstate"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/proto/waHistorySync"
+	"github.com/nocodeleaks/whatsfuck/proto/waLidMigrationSyncPayload"
+	"github.com/nocodeleaks/whatsfuck/proto/waWeb"
+	"github.com/nocodeleaks/whatsfuck/store"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
 )
 
 var pbSerializer = store.SignalProtobufSerializer

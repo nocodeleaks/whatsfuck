@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 func TestMarshalUnmarshalRoundTrip(t *testing.T) {

@@ -22,11 +22,11 @@ import (
 	"testing"
 	"time"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/store"
-	"github.com/polymorfa/hypermeow/types"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/store"
+	"github.com/nocodeleaks/whatsfuck/types"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 func TestBusinessLinkedAccountsQuery(t *testing.T) {

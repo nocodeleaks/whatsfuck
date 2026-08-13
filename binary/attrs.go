@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 // AttrUtility is a helper struct for reading multiple XML attributes and checking for errors afterwards.

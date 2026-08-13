@@ -1,6 +1,6 @@
 syntax = "proto2";
 package WAWebProtobufsAICommon;
-option go_package = "github.com/polymorfa/hypermeow/proto/waAICommon";
+option go_package = "github.com/nocodeleaks/whatsfuck/proto/waAICommon";
 
 import "waCommon/WACommon.proto";
 

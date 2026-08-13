@@ -2608,7 +2608,7 @@ const file_waWa6_WAWebProtobufsWa6_proto_rawDesc = "" +
 	"\x0fIOSAppExtension\x12\x13\n" +
 	"\x0fSHARE_EXTENSION\x10\x00\x12\x15\n" +
 	"\x11SERVICE_EXTENSION\x10\x01\x12\x15\n" +
-	"\x11INTENTS_EXTENSION\x10\x02B,Z*github.com/polymorfa/hypermeow/proto/waWa6"
+	"\x11INTENTS_EXTENSION\x10\x02B.Z,github.com/nocodeleaks/whatsfuck/proto/waWa6"
 
 var (
 	file_waWa6_WAWebProtobufsWa6_proto_rawDescOnce sync.Once

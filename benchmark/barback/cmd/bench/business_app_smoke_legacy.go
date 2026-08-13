@@ -9,7 +9,7 @@ package main
 import (
 	"context"
 
-	whatsmeow "github.com/polymorfa/hypermeow"
+	whatsmeow "github.com/nocodeleaks/whatsfuck"
 )
 
 func businessAppSmokeSupported() bool {

@@ -27,11 +27,11 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/mex"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/socket"
-	"github.com/polymorfa/hypermeow/types"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/mex"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/socket"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 // GetOrderDetails fetches the details of a specific order using its ID and token.

@@ -16,10 +16,10 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	whatsmeow "github.com/polymorfa/hypermeow"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
+	whatsmeow "github.com/nocodeleaks/whatsfuck"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
 )
 
 func TestLoadConfigWorkload(t *testing.T) {

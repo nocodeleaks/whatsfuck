@@ -453,7 +453,7 @@ const file_waAdv_WAAdv_proto_rawDesc = "" +
 	"\x11ADVEncryptionType\x12\b\n" +
 	"\x04E2EE\x10\x00\x12\n" +
 	"\n" +
-	"\x06HOSTED\x10\x01B,Z*github.com/polymorfa/hypermeow/proto/waAdv"
+	"\x06HOSTED\x10\x01B.Z,github.com/nocodeleaks/whatsfuck/proto/waAdv"
 
 var (
 	file_waAdv_WAAdv_proto_rawDescOnce sync.Once

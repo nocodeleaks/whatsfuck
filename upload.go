@@ -23,8 +23,8 @@ import (
 
 	"go.mau.fi/util/random"
 
-	"github.com/polymorfa/hypermeow/socket"
-	"github.com/polymorfa/hypermeow/util/cbcutil"
+	"github.com/nocodeleaks/whatsfuck/socket"
+	"github.com/nocodeleaks/whatsfuck/util/cbcutil"
 )
 
 // UploadResponse contains the data from the attachment upload, which can be put into a message to send the attachment.

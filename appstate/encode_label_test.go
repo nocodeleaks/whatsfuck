@@ -7,7 +7,7 @@ package appstate
 import (
 	"testing"
 
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 func TestBuildLabelChatChangesUsesOnePatch(t *testing.T) {

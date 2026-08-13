@@ -10,7 +10,7 @@ import (
 
 	"github.com/polymorfa/libsignal-protocol-go/protocol"
 
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 type countingSessionStore struct {

@@ -12,9 +12,9 @@ import (
 	"encoding/base64"
 	"sync"
 
-	"github.com/polymorfa/hypermeow/store"
-	"github.com/polymorfa/hypermeow/util/hkdfutil"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	"github.com/nocodeleaks/whatsfuck/store"
+	"github.com/nocodeleaks/whatsfuck/util/hkdfutil"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 // WAPatchName represents a type of app state patch.

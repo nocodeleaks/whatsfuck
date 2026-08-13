@@ -1,6 +1,6 @@
 syntax = "proto2";
 package WAWebProtobufsServerSync;
-option go_package = "github.com/polymorfa/hypermeow/proto/waServerSync";
+option go_package = "github.com/nocodeleaks/whatsfuck/proto/waServerSync";
 
 message SyncdMutation {
 	enum SyncdOperation {

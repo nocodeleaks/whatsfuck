@@ -241,7 +241,7 @@ const file_waFingerprint_WAFingerprint_proto_rawDesc = "" +
 	"\vHostedState\x12\b\n" +
 	"\x04E2EE\x10\x00\x12\n" +
 	"\n" +
-	"\x06HOSTED\x10\x01B4Z2github.com/polymorfa/hypermeow/proto/waFingerprint"
+	"\x06HOSTED\x10\x01B6Z4github.com/nocodeleaks/whatsfuck/proto/waFingerprint"
 
 var (
 	file_waFingerprint_WAFingerprint_proto_rawDescOnce sync.Once

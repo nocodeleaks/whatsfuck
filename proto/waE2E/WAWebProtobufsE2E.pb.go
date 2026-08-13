@@ -14,15 +14,15 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 
-	waAICommon "github.com/polymorfa/hypermeow/proto/waAICommon"
-	waAICommonDeprecated "github.com/polymorfa/hypermeow/proto/waAICommonDeprecated"
-	waAdv "github.com/polymorfa/hypermeow/proto/waAdv"
-	waAea "github.com/polymorfa/hypermeow/proto/waAea"
-	waCommon "github.com/polymorfa/hypermeow/proto/waCommon"
-	waCompanionReg "github.com/polymorfa/hypermeow/proto/waCompanionReg"
-	waMmsRetry "github.com/polymorfa/hypermeow/proto/waMmsRetry"
-	waServerSync "github.com/polymorfa/hypermeow/proto/waServerSync"
-	waStatusAttributions "github.com/polymorfa/hypermeow/proto/waStatusAttributions"
+	waAICommon "github.com/nocodeleaks/whatsfuck/proto/waAICommon"
+	waAICommonDeprecated "github.com/nocodeleaks/whatsfuck/proto/waAICommonDeprecated"
+	waAdv "github.com/nocodeleaks/whatsfuck/proto/waAdv"
+	waAea "github.com/nocodeleaks/whatsfuck/proto/waAea"
+	waCommon "github.com/nocodeleaks/whatsfuck/proto/waCommon"
+	waCompanionReg "github.com/nocodeleaks/whatsfuck/proto/waCompanionReg"
+	waMmsRetry "github.com/nocodeleaks/whatsfuck/proto/waMmsRetry"
+	waServerSync "github.com/nocodeleaks/whatsfuck/proto/waServerSync"
+	waStatusAttributions "github.com/nocodeleaks/whatsfuck/proto/waStatusAttributions"
 )
 
 const (
@@ -26565,7 +26565,7 @@ const file_waE2E_WAWebProtobufsE2E_proto_rawDesc = "" +
 	"\bKeepType\x12\x15\n" +
 	"\x11UNKNOWN_KEEP_TYPE\x10\x00\x12\x10\n" +
 	"\fKEEP_FOR_ALL\x10\x01\x12\x15\n" +
-	"\x11UNDO_KEEP_FOR_ALL\x10\x02B,Z*github.com/polymorfa/hypermeow/proto/waE2E"
+	"\x11UNDO_KEEP_FOR_ALL\x10\x02B.Z,github.com/nocodeleaks/whatsfuck/proto/waE2E"
 
 var (
 	file_waE2E_WAWebProtobufsE2E_proto_rawDescOnce sync.Once

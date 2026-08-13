@@ -10,9 +10,9 @@ import (
 	"context"
 	"fmt"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
 )
 
 func (cli *Client) handleChatState(ctx context.Context, node *waBinary.Node) {

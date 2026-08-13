@@ -1,6 +1,6 @@
 syntax = "proto2";
 package WAArmadilloTransportEvent;
-option go_package = "github.com/polymorfa/hypermeow/proto/waArmadilloTransportEvent";
+option go_package = "github.com/nocodeleaks/whatsfuck/proto/waArmadilloTransportEvent";
 
 message TransportEvent {
 	message Event {

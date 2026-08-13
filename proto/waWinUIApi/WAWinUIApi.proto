@@ -1,6 +1,6 @@
 syntax = "proto2";
 package WAWinUIApi;
-option go_package = "github.com/polymorfa/hypermeow/proto/waWinUIApi";
+option go_package = "github.com/nocodeleaks/whatsfuck/proto/waWinUIApi";
 
 enum PositronDataSource {
 	MESSAGES = 1;

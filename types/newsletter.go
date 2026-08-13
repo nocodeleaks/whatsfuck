@@ -14,7 +14,7 @@ import (
 
 	"go.mau.fi/util/jsontime"
 
-	"github.com/polymorfa/hypermeow/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
 )
 
 type NewsletterVerificationState string

@@ -14,7 +14,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 
-	waCommonParameterised "github.com/polymorfa/hypermeow/proto/waCommonParameterised"
+	waCommonParameterised "github.com/nocodeleaks/whatsfuck/proto/waCommonParameterised"
 )
 
 const (
@@ -2630,7 +2630,7 @@ const file_waConsumerApplicationParameterised_WAConsumerApplicationParameterised
 	"\x10degreesLongitude\x18\x02 \x01(\x01R\x10degreesLongitude\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x1aN\n" +
 	"\fMediaPayload\x12>\n" +
-	"\bprotocol\x18\x01 \x01(\v2\".WACommonParameterised.SubProtocolR\bprotocolBIZGgithub.com/polymorfa/hypermeow/proto/waConsumerApplicationParameterised"
+	"\bprotocol\x18\x01 \x01(\v2\".WACommonParameterised.SubProtocolR\bprotocolBKZIgithub.com/nocodeleaks/whatsfuck/proto/waConsumerApplicationParameterised"
 
 var (
 	file_waConsumerApplicationParameterised_WAConsumerApplicationParameterised_proto_rawDescOnce sync.Once

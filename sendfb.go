@@ -23,15 +23,15 @@ import (
 	"go.mau.fi/util/random"
 	"google.golang.org/protobuf/proto"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	armadillo "github.com/polymorfa/hypermeow/proto"
-	"github.com/polymorfa/hypermeow/proto/waArmadilloApplication"
-	"github.com/polymorfa/hypermeow/proto/waCommon"
-	"github.com/polymorfa/hypermeow/proto/waConsumerApplication"
-	"github.com/polymorfa/hypermeow/proto/waMsgApplication"
-	"github.com/polymorfa/hypermeow/proto/waMsgTransport"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	armadillo "github.com/nocodeleaks/whatsfuck/proto"
+	"github.com/nocodeleaks/whatsfuck/proto/waArmadilloApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waCommon"
+	"github.com/nocodeleaks/whatsfuck/proto/waConsumerApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waMsgApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waMsgTransport"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
 )
 
 const FBMessageVersion = 3

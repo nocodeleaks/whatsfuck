@@ -12,6 +12,7 @@ import (
 	"crypto/cipher"
 	"crypto/sha256"
 	"encoding/base32"
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -21,10 +22,11 @@ import (
 	"golang.org/x/crypto/curve25519"
 	"golang.org/x/crypto/pbkdf2"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/util/hkdfutil"
-	"github.com/polymorfa/hypermeow/util/keys"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
+	"github.com/nocodeleaks/whatsfuck/util/hkdfutil"
+	"github.com/nocodeleaks/whatsfuck/util/keys"
 )
 
 // PairClientType is the type of client to use with PairCode.
@@ -145,8 +147,60 @@ func (cli *Client) PairPhone(ctx context.Context, phone string, showPushNotifica
 func (cli *Client) tryHandleCodePairNotification(ctx context.Context, parentNode *waBinary.Node) {
 	err := cli.handleCodePairNotification(ctx, parentNode)
 	if err != nil {
+		cli.dispatchEvent(classifyPairCodeError(parentNode, err))
 		cli.Log.Errorf("Failed to handle code pair notification: %s", err)
 	}
+}
+
+func classifyPairCodeError(parentNode *waBinary.Node, err error) *events.PairCodeError {
+	event := &events.PairCodeError{
+		Reason: events.PairCodeErrorUnknown,
+		Error:  err,
+	}
+
+	var pairNode *waBinary.Node
+	if parentNode != nil {
+		if node, ok := parentNode.GetOptionalChildByTag("link_code_companion_reg"); ok {
+			pairNode = &node
+			event.Stage = node.AttrGetter().OptionalString("stage")
+			event.ForceManualRefresh = node.AttrGetter().OptionalBool("force_manual_refresh")
+		}
+	}
+
+	if event.Stage == "refresh_code" || event.ForceManualRefresh {
+		event.Reason = events.PairCodeErrorRefreshRequired
+		event.Retryable = true
+		return event
+	}
+
+	if pairNode == nil {
+		event.Reason = events.PairCodeErrorProtocol
+		return event
+	}
+
+	var missingElement *ElementMissingError
+	if errors.As(err, &missingElement) {
+		switch missingElement.Tag {
+		case "link_code_pairing_wrapped_primary_ephemeral_pub", "primary_identity_pub":
+			event.Reason = events.PairCodeErrorInvalidOrExpiredCode
+			event.Retryable = true
+			return event
+		}
+	}
+
+	errorMessage := err.Error()
+	switch {
+	case strings.Contains(errorMessage, "without a pending pairing"):
+		event.Reason = events.PairCodeErrorNoPendingPairing
+		event.Retryable = true
+	case strings.Contains(errorMessage, "pairing ref mismatch"):
+		event.Reason = events.PairCodeErrorInvalidOrExpiredCode
+		event.Retryable = true
+	default:
+		event.Reason = events.PairCodeErrorProtocol
+	}
+
+	return event
 }
 
 func (cli *Client) handleCodePairNotification(ctx context.Context, parentNode *waBinary.Node) error {

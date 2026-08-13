@@ -3,13 +3,13 @@ package armadillo
 import (
 	"google.golang.org/protobuf/proto"
 
-	"github.com/polymorfa/hypermeow/proto/instamadilloAddMessage"
-	"github.com/polymorfa/hypermeow/proto/instamadilloDeleteMessage"
-	"github.com/polymorfa/hypermeow/proto/instamadilloSupplementMessage"
-	"github.com/polymorfa/hypermeow/proto/waArmadilloApplication"
-	"github.com/polymorfa/hypermeow/proto/waCommon"
-	"github.com/polymorfa/hypermeow/proto/waConsumerApplication"
-	"github.com/polymorfa/hypermeow/proto/waMultiDevice"
+	"github.com/nocodeleaks/whatsfuck/proto/instamadilloAddMessage"
+	"github.com/nocodeleaks/whatsfuck/proto/instamadilloDeleteMessage"
+	"github.com/nocodeleaks/whatsfuck/proto/instamadilloSupplementMessage"
+	"github.com/nocodeleaks/whatsfuck/proto/waArmadilloApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waCommon"
+	"github.com/nocodeleaks/whatsfuck/proto/waConsumerApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waMultiDevice"
 )
 
 type MessageApplicationSub interface {

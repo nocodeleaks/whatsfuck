@@ -1,4 +1,4 @@
-module github.com/polymorfa/hypermeow
+module github.com/nocodeleaks/whatsfuck
 
 go 1.25.0
 

@@ -15,10 +15,10 @@ import (
 	"github.com/polymorfa/libsignal-protocol-go/ecc"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/polymorfa/hypermeow/proto/waCert"
-	"github.com/polymorfa/hypermeow/proto/waWa6"
-	"github.com/polymorfa/hypermeow/socket"
-	"github.com/polymorfa/hypermeow/util/keys"
+	"github.com/nocodeleaks/whatsfuck/proto/waCert"
+	"github.com/nocodeleaks/whatsfuck/proto/waWa6"
+	"github.com/nocodeleaks/whatsfuck/socket"
+	"github.com/nocodeleaks/whatsfuck/util/keys"
 )
 
 const NoiseHandshakeResponseTimeout = 20 * time.Second

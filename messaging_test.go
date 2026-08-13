@@ -16,11 +16,11 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	waE2E "github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/proto/waWa6"
-	"github.com/polymorfa/hypermeow/store"
-	"github.com/polymorfa/hypermeow/types"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	waE2E "github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/proto/waWa6"
+	"github.com/nocodeleaks/whatsfuck/store"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 func TestIQErrorIsDistinguishesSensitiveAttributes(t *testing.T) {

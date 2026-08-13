@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 type blockingDeviceContainer struct {

@@ -16,7 +16,7 @@ import (
 
 	"github.com/coder/websocket"
 
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 type FrameSocket struct {

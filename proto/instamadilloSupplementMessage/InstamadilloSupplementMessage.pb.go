@@ -14,7 +14,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 
-	instamadilloCoreTypeMedia "github.com/polymorfa/hypermeow/proto/instamadilloCoreTypeMedia"
+	instamadilloCoreTypeMedia "github.com/nocodeleaks/whatsfuck/proto/instamadilloCoreTypeMedia"
 )
 
 const (
@@ -644,7 +644,7 @@ const file_instamadilloSupplementMessage_InstamadilloSupplementMessage_proto_raw
 	"\x18originalTransportPayload\x18\x01 \x01(\fR\x18originalTransportPayload\"\x8d\x01\n" +
 	"\x12MediaInterventions\x12\x18\n" +
 	"\amediaID\x18\x01 \x01(\tR\amediaID\x12]\n" +
-	"\x10interventionType\x18\x02 \x01(\x0e21.InstamadilloCoreTypeMedia.Media.InterventionTypeR\x10interventionTypeBDZBgithub.com/polymorfa/hypermeow/proto/instamadilloSupplementMessage"
+	"\x10interventionType\x18\x02 \x01(\x0e21.InstamadilloCoreTypeMedia.Media.InterventionTypeR\x10interventionTypeBFZDgithub.com/nocodeleaks/whatsfuck/proto/instamadilloSupplementMessage"
 
 var (
 	file_instamadilloSupplementMessage_InstamadilloSupplementMessage_proto_rawDescOnce sync.Once

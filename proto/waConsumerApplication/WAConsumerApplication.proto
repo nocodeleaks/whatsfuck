@@ -1,6 +1,6 @@
 syntax = "proto2";
 package WAConsumerApplication;
-option go_package = "github.com/polymorfa/hypermeow/proto/waConsumerApplication";
+option go_package = "github.com/nocodeleaks/whatsfuck/proto/waConsumerApplication";
 
 import "waCommon/WACommon.proto";
 

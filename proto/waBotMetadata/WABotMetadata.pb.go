@@ -14,7 +14,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 
-	waCommon "github.com/polymorfa/hypermeow/proto/waCommon"
+	waCommon "github.com/nocodeleaks/whatsfuck/proto/waCommon"
 )
 
 const (
@@ -5057,7 +5057,7 @@ const file_waBotMetadata_WABotMetadata_proto_rawDesc = "" +
 	"USER_INPUT\x10\x03\x12\r\n" +
 	"\tEMU_FLASH\x10\x04\x12\x16\n" +
 	"\x12EMU_FLASH_FOLLOWUP\x10\x05\x12\t\n" +
-	"\x05VOICE\x10\x06B4Z2github.com/polymorfa/hypermeow/proto/waBotMetadata"
+	"\x05VOICE\x10\x06B6Z4github.com/nocodeleaks/whatsfuck/proto/waBotMetadata"
 
 var (
 	file_waBotMetadata_WABotMetadata_proto_rawDescOnce sync.Once

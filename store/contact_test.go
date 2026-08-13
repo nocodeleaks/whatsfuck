@@ -7,7 +7,7 @@ package store
 import (
 	"testing"
 
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 func TestContactEntryMassInsertIncludesUsername(t *testing.T) {

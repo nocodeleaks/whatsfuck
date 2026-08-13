@@ -1029,7 +1029,7 @@ const file_waStatusAttributions_WAStatusAttributions_proto_rawDesc = "" +
 	"\x11NEWSLETTER_STATUS\x10\t\x12\x18\n" +
 	"\x14STATUS_CLOSE_SHARING\x10\n" +
 	"B\x11\n" +
-	"\x0fattributionDataB;Z9github.com/polymorfa/hypermeow/proto/waStatusAttributions"
+	"\x0fattributionDataB=Z;github.com/nocodeleaks/whatsfuck/proto/waStatusAttributions"
 
 var (
 	file_waStatusAttributions_WAStatusAttributions_proto_rawDescOnce sync.Once

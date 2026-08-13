@@ -13,10 +13,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	whatsmeow "github.com/polymorfa/hypermeow"
-	"github.com/polymorfa/hypermeow/store/sqlstore"
-	"github.com/polymorfa/hypermeow/types/events"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	whatsmeow "github.com/nocodeleaks/whatsfuck"
+	"github.com/nocodeleaks/whatsfuck/store/sqlstore"
+	"github.com/nocodeleaks/whatsfuck/types/events"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 func eventHandler(evt any) {

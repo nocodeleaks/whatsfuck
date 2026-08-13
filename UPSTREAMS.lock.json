@@ -1,0 +1,42 @@
+{
+  "schema_version": 2,
+  "integration_repository": "github.com/nocodeleaks/whatsfuck",
+  "reviewed_at": "2026-08-13T00:00:00Z",
+  "sources": {
+    "official": {
+      "remote": "official",
+      "repository": "github.com/tulir/whatsmeow",
+      "branch": "main",
+      "integrated_commit": "a23afe3171803f34d6761979988b9d2275e961c7",
+      "observed_commit": "a23afe3171803f34d6761979988b9d2275e961c7",
+      "trust": "authoritative",
+      "integration_strategy": "reviewed-range-merge",
+      "role": "WhatsApp protocol compatibility"
+    },
+    "hypermeow": {
+      "remote": "hypermeow",
+      "repository": "github.com/polymorfa/hypermeow",
+      "branch": "main",
+      "baseline_commit": "f9db181f1dfa5954790320bcc852125608b4ccba",
+      "reviewed_through": "f9db181f1dfa5954790320bcc852125608b4ccba",
+      "observed_commit": "f9db181f1dfa5954790320bcc852125608b4ccba",
+      "integrated_commits": [],
+      "decisions": [],
+      "trust": "untrusted",
+      "integration_strategy": "approved-single-commit-cherry-pick",
+      "role": "Optional architectural and production improvements"
+    }
+  },
+  "policy": {
+    "automatic_merge": false,
+    "protected_branches": [
+      "main",
+      "master"
+    ],
+    "require_clean_worktree": true,
+    "require_ai_review_for_hypermeow": true,
+    "official_policy": "Review the complete official range, merge it on a review branch, and validate conflicts and tests before publishing.",
+    "hypermeow_policy": "Treat every commit as untrusted. Integrate only an exact SHA approved by the AI review, using cherry-pick --no-commit.",
+    "consumer_policy": "Applications must pin a published WhatsFuck pseudo-version and must never update either upstream directly."
+  }
+}

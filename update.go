@@ -14,8 +14,8 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/polymorfa/hypermeow/socket"
-	"github.com/polymorfa/hypermeow/store"
+	"github.com/nocodeleaks/whatsfuck/socket"
+	"github.com/nocodeleaks/whatsfuck/store"
 )
 
 var clientVersionRegex = regexp.MustCompile(`"client_revision":(\d+),`)

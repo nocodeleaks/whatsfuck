@@ -14,9 +14,9 @@ import (
 	"fmt"
 	"hash"
 
-	"github.com/polymorfa/hypermeow/appstate/lthash"
-	"github.com/polymorfa/hypermeow/proto/waServerSync"
-	"github.com/polymorfa/hypermeow/proto/waSyncAction"
+	"github.com/nocodeleaks/whatsfuck/appstate/lthash"
+	"github.com/nocodeleaks/whatsfuck/proto/waServerSync"
+	"github.com/nocodeleaks/whatsfuck/proto/waSyncAction"
 )
 
 type Mutation struct {

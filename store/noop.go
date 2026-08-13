@@ -11,8 +11,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/util/keys"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/util/keys"
 )
 
 type NoopStore struct {

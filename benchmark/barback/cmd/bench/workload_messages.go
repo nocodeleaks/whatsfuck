@@ -13,9 +13,9 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	whatsmeow "github.com/polymorfa/hypermeow"
-	"github.com/polymorfa/hypermeow/proto/waCommon"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
+	whatsmeow "github.com/nocodeleaks/whatsfuck"
+	"github.com/nocodeleaks/whatsfuck/proto/waCommon"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
 )
 
 var (

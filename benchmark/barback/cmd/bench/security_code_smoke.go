@@ -13,9 +13,9 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	whatsmeow "github.com/polymorfa/hypermeow"
-	"github.com/polymorfa/hypermeow/proto/waFingerprint"
-	"github.com/polymorfa/hypermeow/types"
+	whatsmeow "github.com/nocodeleaks/whatsfuck"
+	"github.com/nocodeleaks/whatsfuck/proto/waFingerprint"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 func validateIdentityVerificationCodes(ctx context.Context, client *whatsmeow.Client, userID types.JID) error {

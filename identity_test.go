@@ -16,16 +16,16 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"github.com/polymorfa/hypermeow/appstate"
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/proto/waFingerprint"
-	"github.com/polymorfa/hypermeow/proto/waHistorySync"
-	"github.com/polymorfa/hypermeow/proto/waSyncAction"
-	"github.com/polymorfa/hypermeow/store"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	"github.com/nocodeleaks/whatsfuck/appstate"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/proto/waFingerprint"
+	"github.com/nocodeleaks/whatsfuck/proto/waHistorySync"
+	"github.com/nocodeleaks/whatsfuck/proto/waSyncAction"
+	"github.com/nocodeleaks/whatsfuck/store"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 func TestParseGroupParticipantPreservesUsername(t *testing.T) {

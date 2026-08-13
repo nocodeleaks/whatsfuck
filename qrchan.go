@@ -14,8 +14,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/polymorfa/hypermeow/types/events"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	"github.com/nocodeleaks/whatsfuck/types/events"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 type QRChannelItem struct {

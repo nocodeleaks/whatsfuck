@@ -13,7 +13,7 @@ package lthash
 import (
 	"encoding/binary"
 
-	"github.com/polymorfa/hypermeow/util/hkdfutil"
+	"github.com/nocodeleaks/whatsfuck/util/hkdfutil"
 )
 
 type LTHash struct {

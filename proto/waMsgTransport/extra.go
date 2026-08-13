@@ -1,9 +1,9 @@
 package waMsgTransport
 
 import (
-	"github.com/polymorfa/hypermeow/proto/armadilloutil"
-	"github.com/polymorfa/hypermeow/proto/instamadilloTransportPayload"
-	"github.com/polymorfa/hypermeow/proto/waMsgApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/armadilloutil"
+	"github.com/nocodeleaks/whatsfuck/proto/instamadilloTransportPayload"
+	"github.com/nocodeleaks/whatsfuck/proto/waMsgApplication"
 )
 
 const (

@@ -13,7 +13,7 @@ package socket
 import (
 	"errors"
 
-	"github.com/polymorfa/hypermeow/binary/token"
+	"github.com/nocodeleaks/whatsfuck/binary/token"
 )
 
 const (

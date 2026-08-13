@@ -21,8 +21,8 @@ import (
 	"go.mau.fi/util/fallocate"
 	"go.mau.fi/util/retryafter"
 
-	"github.com/polymorfa/hypermeow/proto/waMediaTransport"
-	"github.com/polymorfa/hypermeow/util/cbcutil"
+	"github.com/nocodeleaks/whatsfuck/proto/waMediaTransport"
+	"github.com/nocodeleaks/whatsfuck/util/cbcutil"
 )
 
 type File interface {

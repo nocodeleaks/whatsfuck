@@ -9,8 +9,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/polymorfa/hypermeow/mex"
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/mex"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 type deleteNewsletterVariables struct {

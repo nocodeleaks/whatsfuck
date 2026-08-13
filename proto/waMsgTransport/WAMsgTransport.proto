@@ -1,6 +1,6 @@
 syntax = "proto2";
 package WAMsgTransport;
-option go_package = "github.com/polymorfa/hypermeow/proto/waMsgTransport";
+option go_package = "github.com/nocodeleaks/whatsfuck/proto/waMsgTransport";
 
 import "waCommon/WACommon.proto";
 

@@ -17,12 +17,12 @@ import (
 	"go.mau.fi/util/dbutil"
 	"go.mau.fi/util/random"
 
-	"github.com/polymorfa/hypermeow/proto/waAdv"
-	"github.com/polymorfa/hypermeow/store"
-	"github.com/polymorfa/hypermeow/store/sqlstore/upgrades"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/util/keys"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	"github.com/nocodeleaks/whatsfuck/proto/waAdv"
+	"github.com/nocodeleaks/whatsfuck/store"
+	"github.com/nocodeleaks/whatsfuck/store/sqlstore/upgrades"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/util/keys"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 // Container is a wrapper for a SQL database that can contain multiple whatsmeow sessions.

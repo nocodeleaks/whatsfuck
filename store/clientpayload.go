@@ -17,9 +17,9 @@ import (
 
 	"github.com/polymorfa/libsignal-protocol-go/ecc"
 
-	"github.com/polymorfa/hypermeow/proto/waCompanionReg"
-	"github.com/polymorfa/hypermeow/proto/waWa6"
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/proto/waCompanionReg"
+	"github.com/nocodeleaks/whatsfuck/proto/waWa6"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 // WAVersionContainer is a container for a WhatsApp web version number.

@@ -12,8 +12,8 @@ import (
 
 	"go.mau.fi/util/random"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/types"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 type PushConfig interface {

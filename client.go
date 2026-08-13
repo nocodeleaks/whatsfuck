@@ -28,17 +28,17 @@ import (
 	"golang.org/x/net/proxy"
 	"golang.org/x/sync/semaphore"
 
-	"github.com/polymorfa/hypermeow/appstate"
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/proto/waWa6"
-	"github.com/polymorfa/hypermeow/proto/waWeb"
-	"github.com/polymorfa/hypermeow/socket"
-	"github.com/polymorfa/hypermeow/store"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
-	"github.com/polymorfa/hypermeow/util/keys"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	"github.com/nocodeleaks/whatsfuck/appstate"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/proto/waWa6"
+	"github.com/nocodeleaks/whatsfuck/proto/waWeb"
+	"github.com/nocodeleaks/whatsfuck/socket"
+	"github.com/nocodeleaks/whatsfuck/store"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
+	"github.com/nocodeleaks/whatsfuck/util/keys"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 // EventHandler is a function that can handle events from WhatsApp.

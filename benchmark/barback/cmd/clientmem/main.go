@@ -13,9 +13,9 @@ import (
 	"strconv"
 	"syscall"
 
-	whatsmeow "github.com/polymorfa/hypermeow"
-	"github.com/polymorfa/hypermeow/store"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	whatsmeow "github.com/nocodeleaks/whatsfuck"
+	"github.com/nocodeleaks/whatsfuck/store"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 var revision = "working-tree"

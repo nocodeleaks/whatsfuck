@@ -1,15 +1,17 @@
-# HyperMeow
+# WhatsFuck
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/polymorfa/hypermeow.svg)](https://pkg.go.dev/github.com/polymorfa/hypermeow)
-[![Go](https://github.com/polymorfa/hypermeow/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/polymorfa/hypermeow/actions/workflows/go.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/nocodeleaks/whatsfuck.svg)](https://pkg.go.dev/github.com/nocodeleaks/whatsfuck)
+[![Go](https://github.com/nocodeleaks/whatsfuck/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/nocodeleaks/whatsfuck/actions/workflows/go.yml)
 
-HyperMeow is Polymorfa's production-focused fork of [tulir/whatsmeow](https://github.com/tulir/whatsmeow). It keeps the upstream Go package names and protocol foundation while adding the business-app surface, LID-first identity model, bounded state, PostgreSQL efficiency, and reliability controls needed for large multi-session deployments.
+WhatsFuck is the NoCodeLeaks integration fork that evaluates two upstreams independently: [tulir/whatsmeow](https://github.com/tulir/whatsmeow) is the authoritative source for WhatsApp protocol compatibility, while [polymorfa/hypermeow](https://github.com/polymorfa/hypermeow) is an untrusted source of optional architectural candidates. Applications depend only on this stable module path while upstream revisions and review decisions are tracked in [`UPSTREAMS.lock.json`](UPSTREAMS.lock.json).
 
-The upstream project remains the smaller choice for applications that only need its core WhatsApp messaging scope. HyperMeow deliberately accepts a broader API and maintenance surface in exchange for the capabilities below.
+The root package intentionally remains named `whatsmeow` for source compatibility. Official changes are reviewed as a complete range and merged on a review branch. HyperMeow is never merged as a branch: only an exact SHA approved independently may be prepared with `cherry-pick --no-commit`. No upstream is integrated, committed, or published automatically.
 
-## Why HyperMeow instead of upstream WhatsMeow?
+The review workflow is available through `scripts/upstream-review.sh`. It reports source drift, generates a complete review packet, asks Codex for a read-only structured assessment, blocks integration on protected branches, and never commits or pushes changes.
 
-This comparison was last verified against upstream `main` at [`a23afe3`](https://github.com/tulir/whatsmeow/commit/a23afe3171803f34d6761979988b9d2275e961c7) on 2026-08-11. Each upstream sync must update this section when the difference changes.
+## HyperMeow candidates compared with upstream WhatsMeow
+
+This comparison was last verified against upstream `main` at [`a23afe3`](https://github.com/tulir/whatsmeow/commit/a23afe3171803f34d6761979988b9d2275e961c7) on 2026-08-11. These are review candidates, not trusted updates. Each candidate must pass the per-commit policy before integration, and each upstream sync must update this section when the difference changes.
 
 | Area | HyperMeow advantage over upstream `main` |
 | --- | --- |
@@ -46,19 +48,19 @@ The complete three-repeat system matrix documents allocation, RSS, CPU, latency,
 Install the newest reviewed commit from the authoritative `main` branch:
 
 ```sh
-go get github.com/polymorfa/hypermeow@main
+go get github.com/nocodeleaks/whatsfuck@main
 ```
 
 The `main` query resolves to a commit pseudo-version. Pin the resulting
 pseudo-version in `go.mod` for reproducible builds. Every published semantic
-version is retracted: do not install HyperMeow with `@latest`, a version tag, or
+version is retracted: do not install WhatsFuck with `@latest`, a version tag, or
 any feature branch.
 
 To experiment with changes that have not reached `main`, use the integration
 branch explicitly:
 
 ```sh
-go get github.com/polymorfa/hypermeow@dev
+go get github.com/nocodeleaks/whatsfuck@dev
 ```
 
 `dev` is unstable and may be rebased. Do not use it in production or publish a
@@ -67,16 +69,16 @@ library that depends on it.
 The root package remains named `whatsmeow`, so use an explicit import alias:
 
 ```go
-import whatsmeow "github.com/polymorfa/hypermeow"
+import whatsmeow "github.com/nocodeleaks/whatsfuck"
 ```
 
 ## Migrating from WhatsMeow
 
-Replace `go.mau.fi/whatsmeow` imports with `github.com/polymorfa/hypermeow` and remove any old module replacement:
+Replace `go.mau.fi/whatsmeow` imports with `github.com/nocodeleaks/whatsfuck` and remove any old module replacement:
 
 ```sh
 go mod edit -dropreplace=go.mau.fi/whatsmeow
-go get github.com/polymorfa/hypermeow@main
+go get github.com/nocodeleaks/whatsfuck@main
 go mod tidy
 ```
 

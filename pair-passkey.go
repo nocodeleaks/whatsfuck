@@ -18,14 +18,14 @@ import (
 	"golang.org/x/crypto/curve25519"
 	"google.golang.org/protobuf/proto"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/proto/waCompanionReg"
-	"github.com/polymorfa/hypermeow/store"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
-	"github.com/polymorfa/hypermeow/util/gcmutil"
-	"github.com/polymorfa/hypermeow/util/hkdfutil"
-	"github.com/polymorfa/hypermeow/util/keys"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/proto/waCompanionReg"
+	"github.com/nocodeleaks/whatsfuck/store"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
+	"github.com/nocodeleaks/whatsfuck/util/gcmutil"
+	"github.com/nocodeleaks/whatsfuck/util/hkdfutil"
+	"github.com/nocodeleaks/whatsfuck/util/keys"
 )
 
 type passkeyLinkingCache struct {

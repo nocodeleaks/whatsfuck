@@ -1,10 +1,10 @@
 package waMsgApplication
 
 import (
-	"github.com/polymorfa/hypermeow/proto/armadilloutil"
-	"github.com/polymorfa/hypermeow/proto/waArmadilloApplication"
-	"github.com/polymorfa/hypermeow/proto/waConsumerApplication"
-	"github.com/polymorfa/hypermeow/proto/waMultiDevice"
+	"github.com/nocodeleaks/whatsfuck/proto/armadilloutil"
+	"github.com/nocodeleaks/whatsfuck/proto/waArmadilloApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waConsumerApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waMultiDevice"
 )
 
 const (

@@ -9,9 +9,9 @@ package events
 import (
 	"time"
 
-	"github.com/polymorfa/hypermeow/appstate"
-	"github.com/polymorfa/hypermeow/proto/waSyncAction"
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/appstate"
+	"github.com/nocodeleaks/whatsfuck/proto/waSyncAction"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 // Contact is emitted when an entry in the user's contact list is modified from another device.

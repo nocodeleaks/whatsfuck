@@ -17,12 +17,12 @@ import (
 	"go.mau.fi/util/random"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/polymorfa/hypermeow/proto/waCommon"
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
-	"github.com/polymorfa/hypermeow/util/gcmutil"
-	"github.com/polymorfa/hypermeow/util/hkdfutil"
+	"github.com/nocodeleaks/whatsfuck/proto/waCommon"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
+	"github.com/nocodeleaks/whatsfuck/util/gcmutil"
+	"github.com/nocodeleaks/whatsfuck/util/hkdfutil"
 )
 
 type MsgSecretType string

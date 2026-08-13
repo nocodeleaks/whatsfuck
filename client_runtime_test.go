@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
-	"github.com/polymorfa/hypermeow/store"
-	waLog "github.com/polymorfa/hypermeow/util/log"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
+	"github.com/nocodeleaks/whatsfuck/store"
+	waLog "github.com/nocodeleaks/whatsfuck/util/log"
 )
 
 func TestPutBoundedCache(t *testing.T) {

@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT License. See LICENSE-MIT for details.
 
-module github.com/polymorfa/hypermeow/benchmark/barback
+module github.com/nocodeleaks/whatsfuck/benchmark/barback
 
 go 1.25.0
 
@@ -10,7 +10,7 @@ toolchain go1.26.5
 
 require (
 	github.com/jackc/pgx/v5 v5.10.0
-	github.com/polymorfa/hypermeow v0.0.0
+	github.com/nocodeleaks/whatsfuck v0.0.0
 	google.golang.org/protobuf v1.36.11
 )
 
@@ -35,4 +35,4 @@ require (
 	golang.org/x/text v0.40.0 // indirect
 )
 
-replace github.com/polymorfa/hypermeow => ../..
+replace github.com/nocodeleaks/whatsfuck => ../..

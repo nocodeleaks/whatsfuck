@@ -1,6 +1,6 @@
 syntax = "proto2";
 package WAArmadilloICDC;
-option go_package = "github.com/polymorfa/hypermeow/proto/waArmadilloICDC";
+option go_package = "github.com/nocodeleaks/whatsfuck/proto/waArmadilloICDC";
 
 message ICDCIdentityList {
 	optional int32 seq = 1;

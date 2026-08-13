@@ -14,13 +14,13 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 
-	instamadilloCoreTypeActionLog "github.com/polymorfa/hypermeow/proto/instamadilloCoreTypeActionLog"
-	instamadilloCoreTypeAdminMessage "github.com/polymorfa/hypermeow/proto/instamadilloCoreTypeAdminMessage"
-	instamadilloCoreTypeCollection "github.com/polymorfa/hypermeow/proto/instamadilloCoreTypeCollection"
-	instamadilloCoreTypeLink "github.com/polymorfa/hypermeow/proto/instamadilloCoreTypeLink"
-	instamadilloCoreTypeMedia "github.com/polymorfa/hypermeow/proto/instamadilloCoreTypeMedia"
-	instamadilloCoreTypeText "github.com/polymorfa/hypermeow/proto/instamadilloCoreTypeText"
-	instamadilloXmaContentRef "github.com/polymorfa/hypermeow/proto/instamadilloXmaContentRef"
+	instamadilloCoreTypeActionLog "github.com/nocodeleaks/whatsfuck/proto/instamadilloCoreTypeActionLog"
+	instamadilloCoreTypeAdminMessage "github.com/nocodeleaks/whatsfuck/proto/instamadilloCoreTypeAdminMessage"
+	instamadilloCoreTypeCollection "github.com/nocodeleaks/whatsfuck/proto/instamadilloCoreTypeCollection"
+	instamadilloCoreTypeLink "github.com/nocodeleaks/whatsfuck/proto/instamadilloCoreTypeLink"
+	instamadilloCoreTypeMedia "github.com/nocodeleaks/whatsfuck/proto/instamadilloCoreTypeMedia"
+	instamadilloCoreTypeText "github.com/nocodeleaks/whatsfuck/proto/instamadilloCoreTypeText"
+	instamadilloXmaContentRef "github.com/nocodeleaks/whatsfuck/proto/instamadilloXmaContentRef"
 )
 
 const (
@@ -882,7 +882,7 @@ const file_instamadilloAddMessage_InstamadilloAddMessage_proto_rawDesc = "" +
 	"#PLACEHOLDER_TYPE_DECRYPTION_FAILURE\x10\x01\x12.\n" +
 	"*PLACEHOLDER_TYPE_NOT_SUPPORTED_NEED_UPDATE\x10\x02\x12'\n" +
 	"#PLACEHOLDER_TYPE_DEVICE_UNAVAILABLE\x10\x03\x122\n" +
-	".PLACEHOLDER_TYPE_NOT_SUPPORTED_NOT_RECOVERABLE\x10\x04B=Z;github.com/polymorfa/hypermeow/proto/instamadilloAddMessage"
+	".PLACEHOLDER_TYPE_NOT_SUPPORTED_NOT_RECOVERABLE\x10\x04B?Z=github.com/nocodeleaks/whatsfuck/proto/instamadilloAddMessage"
 
 var (
 	file_instamadilloAddMessage_InstamadilloAddMessage_proto_rawDescOnce sync.Once

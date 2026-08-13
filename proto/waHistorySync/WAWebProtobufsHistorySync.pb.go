@@ -14,11 +14,11 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 
-	waChatLockSettings "github.com/polymorfa/hypermeow/proto/waChatLockSettings"
-	waCommon "github.com/polymorfa/hypermeow/proto/waCommon"
-	waE2E "github.com/polymorfa/hypermeow/proto/waE2E"
-	waSyncAction "github.com/polymorfa/hypermeow/proto/waSyncAction"
-	waWeb "github.com/polymorfa/hypermeow/proto/waWeb"
+	waChatLockSettings "github.com/nocodeleaks/whatsfuck/proto/waChatLockSettings"
+	waCommon "github.com/nocodeleaks/whatsfuck/proto/waCommon"
+	waE2E "github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	waSyncAction "github.com/nocodeleaks/whatsfuck/proto/waSyncAction"
+	waWeb "github.com/nocodeleaks/whatsfuck/proto/waWeb"
 )
 
 const (
@@ -2617,7 +2617,7 @@ const file_waHistorySync_WAWebProtobufsHistorySync_proto_rawDesc = "" +
 	"\bE2EE_MSG\x10\x01\x12\x0e\n" +
 	"\n" +
 	"NE2EE_SELF\x10\x02\x12\x0f\n" +
-	"\vNE2EE_OTHER\x10\x03B4Z2github.com/polymorfa/hypermeow/proto/waHistorySync"
+	"\vNE2EE_OTHER\x10\x03B6Z4github.com/nocodeleaks/whatsfuck/proto/waHistorySync"
 
 var (
 	file_waHistorySync_WAWebProtobufsHistorySync_proto_rawDescOnce sync.Once

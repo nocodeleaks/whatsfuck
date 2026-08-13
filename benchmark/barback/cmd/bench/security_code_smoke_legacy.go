@@ -9,8 +9,8 @@ package main
 import (
 	"context"
 
-	whatsmeow "github.com/polymorfa/hypermeow"
-	"github.com/polymorfa/hypermeow/types"
+	whatsmeow "github.com/nocodeleaks/whatsfuck"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 func validateIdentityVerificationCodes(context.Context, *whatsmeow.Client, types.JID) error {

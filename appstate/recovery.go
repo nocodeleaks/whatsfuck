@@ -17,10 +17,10 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	"github.com/polymorfa/hypermeow/proto/waE2E"
-	"github.com/polymorfa/hypermeow/proto/waServerSync"
-	"github.com/polymorfa/hypermeow/proto/waSyncdSnapshotRecovery"
-	"github.com/polymorfa/hypermeow/store"
+	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
+	"github.com/nocodeleaks/whatsfuck/proto/waServerSync"
+	"github.com/nocodeleaks/whatsfuck/proto/waSyncdSnapshotRecovery"
+	"github.com/nocodeleaks/whatsfuck/store"
 )
 
 func ParseRecovery(

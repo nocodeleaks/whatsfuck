@@ -13,7 +13,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/polymorfa/hypermeow/types"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 type identityReaderState struct {

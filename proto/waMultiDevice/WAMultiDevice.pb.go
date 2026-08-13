@@ -652,7 +652,7 @@ const file_waMultiDevice_WAMultiDevice_proto_rawDesc = "" +
 	"\x11AppStateSyncKeyId\x12\x14\n" +
 	"\x05keyID\x18\x01 \x01(\fR\x05keyIDB\x11\n" +
 	"\x0fapplicationData\x1a\b\n" +
-	"\x06SignalB4Z2github.com/polymorfa/hypermeow/proto/waMultiDevice"
+	"\x06SignalB6Z4github.com/nocodeleaks/whatsfuck/proto/waMultiDevice"
 
 var (
 	file_waMultiDevice_WAMultiDevice_proto_rawDescOnce sync.Once

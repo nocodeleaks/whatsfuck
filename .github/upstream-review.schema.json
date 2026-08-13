@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WhatsFuck upstream review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source",
+    "reviewer",
+    "base_commit",
+    "target_commit",
+    "verdict",
+    "summary",
+    "decisions"
+  ],
+  "properties": {
+    "source": {
+      "type": "string",
+      "enum": ["official", "hypermeow"]
+    },
+    "reviewer": {
+      "type": "string",
+      "enum": ["codex"]
+    },
+    "base_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "target_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["approved", "manual_review", "rejected"]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["commit", "verdict", "rationale", "risks", "tests"],
+        "properties": {
+          "commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["approved", "manual_review", "rejected"]
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "risks": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "tests": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -10,8 +10,8 @@ import (
 	"context"
 	"fmt"
 
-	whatsmeow "github.com/polymorfa/hypermeow"
-	"github.com/polymorfa/hypermeow/types"
+	whatsmeow "github.com/nocodeleaks/whatsfuck"
+	"github.com/nocodeleaks/whatsfuck/types"
 )
 
 func businessAppSmokeSupported() bool {

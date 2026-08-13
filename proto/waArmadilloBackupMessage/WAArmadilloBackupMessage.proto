@@ -1,6 +1,6 @@
 syntax = "proto2";
 package WAArmadilloBackupMessage;
-option go_package = "github.com/polymorfa/hypermeow/proto/waArmadilloBackupMessage";
+option go_package = "github.com/nocodeleaks/whatsfuck/proto/waArmadilloBackupMessage";
 
 import "waArmadilloBackupCommon/WAArmadilloBackupCommon.proto";
 

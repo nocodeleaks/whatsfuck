@@ -13,7 +13,7 @@ import (
 	"reflect"
 	"strconv"
 
-	waBinary "github.com/polymorfa/hypermeow/binary"
+	waBinary "github.com/nocodeleaks/whatsfuck/binary"
 )
 
 // Miscellaneous errors

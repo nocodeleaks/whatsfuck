@@ -1,8 +1,8 @@
 package waConsumerApplication
 
 import (
-	"github.com/polymorfa/hypermeow/proto/armadilloutil"
-	"github.com/polymorfa/hypermeow/proto/waMediaTransport"
+	"github.com/nocodeleaks/whatsfuck/proto/armadilloutil"
+	"github.com/nocodeleaks/whatsfuck/proto/waMediaTransport"
 )
 
 type ConsumerApplication_Content_Content = isConsumerApplication_Content_Content

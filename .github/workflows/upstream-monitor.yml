@@ -1,0 +1,109 @@
+name: Monitor upstream sources
+
+on:
+  schedule:
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Compare upstream commits
+        id: compare
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          official_base=$(jq -r '.sources.official.integrated_commit' UPSTREAMS.lock.json)
+          hypermeow_base=$(jq -r '.sources.hypermeow.reviewed_through' UPSTREAMS.lock.json)
+          official_current=$(git ls-remote https://github.com/tulir/whatsmeow.git refs/heads/main | cut -f1)
+          hypermeow_current=$(git ls-remote https://github.com/polymorfa/hypermeow.git refs/heads/main | cut -f1)
+
+          {
+            echo "official_base=$official_base"
+            echo "official_current=$official_current"
+            echo "hypermeow_base=$hypermeow_base"
+            echo "hypermeow_current=$hypermeow_current"
+            [[ "$official_base" == "$official_current" ]] && echo "official_drift=false" || echo "official_drift=true"
+            [[ "$hypermeow_base" == "$hypermeow_current" ]] && echo "hypermeow_drift=false" || echo "hypermeow_drift=true"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish comparison summary
+        shell: bash
+        run: |
+          {
+            echo "## WhatsFuck upstream comparison"
+            echo
+            echo "| Source | Trust | Integration | Recorded | Current |"
+            echo "| --- | --- | --- | --- | --- |"
+            echo "| Official WhatsMeow | Authoritative | Reviewed range merge | \`${{ steps.compare.outputs.official_base }}\` | \`${{ steps.compare.outputs.official_current }}\` |"
+            echo "| HyperMeow | Untrusted | Approved single-commit cherry-pick | \`${{ steps.compare.outputs.hypermeow_base }}\` | \`${{ steps.compare.outputs.hypermeow_current }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open or update official WhatsMeow review issue
+        if: steps.compare.outputs.official_drift == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ steps.compare.outputs.official_base }}
+          TARGET: ${{ steps.compare.outputs.official_current }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          title="Review authoritative WhatsMeow range"
+          body=$(mktemp)
+          {
+            echo "Official WhatsMeow moved from \`$BASE\` to \`$TARGET\`."
+            echo
+            echo "This source is authoritative for protocol compatibility, but conflicts and regressions still require review."
+            echo
+            echo "1. Run \`scripts/upstream-review.sh review official --from $BASE --to $TARGET\`."
+            echo "2. Prepare the reviewed range only on a dedicated branch with \`apply-official\`."
+            echo "3. Run the complete test suite before committing and publishing the fork."
+            echo
+            echo "Never update a consuming application directly from the official source."
+          } > "$body"
+
+          issue_number=$(gh issue list --state open --search "$title in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n1)
+          if [[ -n "$issue_number" ]]; then
+            gh issue comment "$issue_number" --body-file "$body"
+          else
+            gh issue create --title "$title" --body-file "$body"
+          fi
+
+      - name: Open or update untrusted HyperMeow review issue
+        if: steps.compare.outputs.hypermeow_drift == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ steps.compare.outputs.hypermeow_base }}
+          TARGET: ${{ steps.compare.outputs.hypermeow_current }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          title="Evaluate untrusted HyperMeow candidates"
+          body=$(mktemp)
+          {
+            echo "HyperMeow moved from \`$BASE\` to \`$TARGET\`."
+            echo
+            echo "HyperMeow is an untrusted source. Do not merge, rebase, or update to its branch."
+            echo
+            echo "1. Run \`scripts/upstream-review.sh review hypermeow --from $BASE --to $TARGET\`."
+            echo "2. Evaluate every SHA independently with the generated AI review."
+            echo "3. Prepare only exact commits marked \`approved\` with \`apply-hypermeow <SHA> <review.json>\`."
+            echo "4. Run the complete test suite before committing and publishing the fork."
+          } > "$body"
+
+          issue_number=$(gh issue list --state open --search "$title in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n1)
+          if [[ -n "$issue_number" ]]; then
+            gh issue comment "$issue_number" --body-file "$body"
+          else
+            gh issue create --title "$title" --body-file "$body"
+          fi

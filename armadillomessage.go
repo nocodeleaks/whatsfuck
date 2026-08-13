@@ -12,14 +12,14 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	armadillo "github.com/polymorfa/hypermeow/proto"
-	"github.com/polymorfa/hypermeow/proto/armadilloutil"
-	"github.com/polymorfa/hypermeow/proto/instamadilloTransportPayload"
-	"github.com/polymorfa/hypermeow/proto/waCommon"
-	"github.com/polymorfa/hypermeow/proto/waMsgApplication"
-	"github.com/polymorfa/hypermeow/proto/waMsgTransport"
-	"github.com/polymorfa/hypermeow/types"
-	"github.com/polymorfa/hypermeow/types/events"
+	armadillo "github.com/nocodeleaks/whatsfuck/proto"
+	"github.com/nocodeleaks/whatsfuck/proto/armadilloutil"
+	"github.com/nocodeleaks/whatsfuck/proto/instamadilloTransportPayload"
+	"github.com/nocodeleaks/whatsfuck/proto/waCommon"
+	"github.com/nocodeleaks/whatsfuck/proto/waMsgApplication"
+	"github.com/nocodeleaks/whatsfuck/proto/waMsgTransport"
+	"github.com/nocodeleaks/whatsfuck/types"
+	"github.com/nocodeleaks/whatsfuck/types/events"
 )
 
 func (cli *Client) handleDecryptedArmadillo(ctx context.Context, info *types.MessageInfo, decrypted []byte, retryCount int) (handlerFailed, protobufFailed bool) {
