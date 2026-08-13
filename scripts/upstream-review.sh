@@ -323,7 +323,9 @@ apply_hypermeow_command() {
   base="$(resolve_commit "$(jq -er '.base_commit' "$review_file")")"
   target="$(resolve_commit "$(jq -er '.target_commit' "$review_file")")"
   expected_base="$(resolve_commit "$(baseline_for hypermeow)")"
-  [[ "$base" == "$expected_base" ]] || die "Review does not start at the recorded HyperMeow baseline"
+  if [[ "$base" != "$expected_base" && "$target" != "$expected_base" ]]; then
+    die "Review is not aligned with the recorded HyperMeow review range"
+  fi
   assert_source_commit hypermeow "$target"
   assert_source_commit hypermeow "$commit"
   git -C "$REPOSITORY_ROOT" merge-base --is-ancestor "$base" "$commit" ||

@@ -54,6 +54,8 @@ official_base="$(git -C "$TEST_ROOT/official-work" rev-parse HEAD)"
 git clone -q "$TEST_ROOT/official.git" "$TEST_ROOT/hyper-work"
 git_configure "$TEST_ROOT/hyper-work"
 commit_file "$TEST_ROOT/hyper-work" architecture.txt candidate 'HyperMeow candidate'
+hyper_first="$(git -C "$TEST_ROOT/hyper-work" rev-parse HEAD)"
+commit_file "$TEST_ROOT/hyper-work" architecture-two.txt candidate-two 'Second HyperMeow candidate'
 git -C "$TEST_ROOT/hyper-work" remote set-url origin "$TEST_ROOT/hypermeow.git"
 git -C "$TEST_ROOT/hyper-work" push -q -u origin main
 git -C "$TEST_ROOT/hypermeow.git" symbolic-ref HEAD refs/heads/main
@@ -108,7 +110,7 @@ git -C "$TEST_ROOT/integration" fetch -q official main
 
 status_json="$($TEST_ROOT/integration/scripts/upstream-review.sh status --json)"
 jq -e '.sources[] | select(.source == "official" and .pending == 1)' <<<"$status_json" >/dev/null
-jq -e '.sources[] | select(.source == "hypermeow" and .pending == 1)' <<<"$status_json" >/dev/null
+jq -e '.sources[] | select(.source == "hypermeow" and .pending == 2)' <<<"$status_json" >/dev/null
 
 review_root="$TEST_ROOT/reviews"
 "$TEST_ROOT/integration/scripts/upstream-review.sh" review official --output "$review_root/official" --no-ai >/dev/null
@@ -123,8 +125,9 @@ jq -n \
   >"$review_root/official.json"
 jq -n \
   --arg base "$official_base" \
+  --arg first "$hyper_first" \
   --arg target "$hyper_target" \
-  '{source: "hypermeow", reviewer: "codex", base_commit: $base, target_commit: $target, verdict: "approved", summary: "test", decisions: [{commit: $target, verdict: "approved", rationale: "test", risks: [], tests: []}]}' \
+  '{source: "hypermeow", reviewer: "codex", base_commit: $base, target_commit: $target, verdict: "approved", summary: "test", decisions: [{commit: $first, verdict: "approved", rationale: "test", risks: [], tests: []}, {commit: $target, verdict: "approved", rationale: "test", risks: [], tests: []}]}' \
   >"$review_root/hypermeow-approved.json"
 jq -n \
   --arg base "$official_base" \
@@ -137,17 +140,24 @@ expect_failure "protected branch 'main'" \
 
 git -C "$TEST_ROOT/integration" switch -q -c review/upstream-policy-test
 "$TEST_ROOT/integration/scripts/upstream-review.sh" apply-official "$review_root/official.json" --dry-run >/dev/null
-"$TEST_ROOT/integration/scripts/upstream-review.sh" apply-hypermeow "$hyper_target" "$review_root/hypermeow-approved.json" --dry-run >/dev/null
+"$TEST_ROOT/integration/scripts/upstream-review.sh" apply-hypermeow "$hyper_first" "$review_root/hypermeow-approved.json" --dry-run >/dev/null
 expect_failure 'not individually approved' \
   "$TEST_ROOT/integration/scripts/upstream-review.sh" apply-hypermeow "$hyper_target" "$review_root/hypermeow-rejected.json" --dry-run
 
 head_before="$(git -C "$TEST_ROOT/integration" rev-parse HEAD)"
-"$TEST_ROOT/integration/scripts/upstream-review.sh" apply-hypermeow "$hyper_target" "$review_root/hypermeow-approved.json" >/dev/null
+"$TEST_ROOT/integration/scripts/upstream-review.sh" apply-hypermeow "$hyper_first" "$review_root/hypermeow-approved.json" >/dev/null
 [[ -f "$TEST_ROOT/integration/architecture.txt" ]]
 [[ "$(git -C "$TEST_ROOT/integration" rev-parse HEAD)" == "$head_before" ]]
-jq -e --arg commit "$hyper_target" '.sources.hypermeow.integrated_commits | index($commit)' \
+jq -e --arg commit "$hyper_first" '.sources.hypermeow.integrated_commits | index($commit)' \
   "$TEST_ROOT/integration/UPSTREAMS.lock.json" >/dev/null
-jq -e --arg commit "$hyper_target" '.sources.hypermeow.decisions[] | select(.commit == $commit and .verdict == "approved")' \
+jq -e --arg commit "$hyper_first" '.sources.hypermeow.decisions[] | select(.commit == $commit and .verdict == "approved")' \
+  "$TEST_ROOT/integration/UPSTREAMS.lock.json" >/dev/null
+
+git -C "$TEST_ROOT/integration" add architecture.txt UPSTREAMS.lock.json
+git -C "$TEST_ROOT/integration" commit -q -m 'Integrate first approved candidate'
+"$TEST_ROOT/integration/scripts/upstream-review.sh" apply-hypermeow "$hyper_target" "$review_root/hypermeow-approved.json" >/dev/null
+[[ -f "$TEST_ROOT/integration/architecture-two.txt" ]]
+jq -e --arg commit "$hyper_target" '.sources.hypermeow.integrated_commits | index($commit)' \
   "$TEST_ROOT/integration/UPSTREAMS.lock.json" >/dev/null
 
 printf 'upstream-review tests passed\n'
