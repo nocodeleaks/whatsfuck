@@ -382,6 +382,7 @@ func (cli *Client) decryptMessages(ctx context.Context, info *types.MessageInfo,
 		}
 	}
 	var recognizedStanza, protobufFailed bool
+	var liveDuration int64
 	for _, child := range children {
 		if child.Tag != "enc" {
 			continue
@@ -392,6 +393,10 @@ func (cli *Client) decryptMessages(ctx context.Context, info *types.MessageInfo,
 		if !ok {
 			continue
 		}
+		// Live location stanzas carry the sharing duration as an envelope
+		// attribute; the decrypted proto itself has no such field. Absent
+		// on every other message type.
+		liveDuration, _ = ag.GetInt64("duration", false)
 		var decrypted []byte
 		var ciphertextHash *[32]byte
 		var err error
@@ -476,7 +481,7 @@ func (cli *Client) decryptMessages(ctx context.Context, info *types.MessageInfo,
 				continue
 			}
 			protobufFailed = false
-			handlerFailed = cli.handleDecryptedMessage(ctx, info, &msg, retryCount)
+			handlerFailed = cli.handleDecryptedMessage(ctx, info, &msg, retryCount, liveDuration)
 		case 3:
 			handlerFailed, protobufFailed = cli.handleDecryptedArmadillo(ctx, info, decrypted, retryCount)
 		default:
@@ -1272,12 +1277,12 @@ func (cli *Client) storeHistoricalPNLIDMappings(ctx context.Context, mappings []
 	}
 }
 
-func (cli *Client) handleDecryptedMessage(ctx context.Context, info *types.MessageInfo, msg *waE2E.Message, retryCount int) (handlerFailed bool) {
+func (cli *Client) handleDecryptedMessage(ctx context.Context, info *types.MessageInfo, msg *waE2E.Message, retryCount int, liveDuration int64) (handlerFailed bool) {
 	ok := cli.processProtocolParts(ctx, info, msg)
 	if !ok {
 		return false
 	}
-	evt := &events.Message{Info: *info, RawMessage: msg, RetryCount: retryCount}
+	evt := &events.Message{Info: *info, RawMessage: msg, RetryCount: retryCount, LiveDuration: liveDuration}
 	return cli.dispatchEvent(evt.UnwrapRaw())
 }
 

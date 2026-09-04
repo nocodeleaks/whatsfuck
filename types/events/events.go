@@ -374,6 +374,13 @@ type Message struct {
 	// If the message was re-requested from the sender, this is the number of retries it took.
 	RetryCount int
 
+	// LiveDuration carries the sender-chosen sharing duration in seconds
+	// from the wire `<enc duration=...>` attribute when the stanza is a
+	// live location message (WhatsApp offers 15 minutes, 1 hour and 8
+	// hours); surfaces render "sharing until <time>" from it. Zero when
+	// the attribute is absent.
+	LiveDuration int64
+
 	NewsletterMeta *NewsletterMessageMeta
 
 	// The raw message struct. This is the raw unmodified data, which means the actual message might

@@ -408,7 +408,7 @@ func (int *DangerousInternalClient) StoreHistoricalPNLIDMappings(ctx context.Con
 }
 
 func (int *DangerousInternalClient) HandleDecryptedMessage(ctx context.Context, info *types.MessageInfo, msg *waE2E.Message, retryCount int) (handlerFailed bool) {
-	return int.c.handleDecryptedMessage(ctx, info, msg, retryCount)
+	return int.c.handleDecryptedMessage(ctx, info, msg, retryCount, 0)
 }
 
 func (int *DangerousInternalClient) DecryptMsgSecret(ctx context.Context, msg *events.Message, useCase MsgSecretType, encrypted messageEncryptedSecret, origMsgKey *waCommon.MessageKey) ([]byte, error) {
