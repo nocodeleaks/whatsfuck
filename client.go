@@ -157,7 +157,6 @@ type Client struct {
 	responseWaitersLock sync.Mutex
 	businessCatalogAuth atomic.Pointer[businessCatalogAuthState]
 
-	handlerQueue      chan *waBinary.Node
 	eventHandlers     []wrappedEventHandler
 	eventHandlersLock sync.RWMutex
 
@@ -327,7 +326,6 @@ func NewClient(deviceStore *store.Device, log waLog.Logger) *Client {
 		recvLog:            log.Sub("Recv"),
 		sendLog:            log.Sub("Send"),
 		uniqueID:           fmt.Sprintf("%d.%d-", uniqueIDPrefix[0], uniqueIDPrefix[1]),
-		handlerQueue:       make(chan *waBinary.Node, handlerQueueSize),
 		appStateProc:       appstate.NewProcessor(deviceStore, log.Sub("AppState")),
 		socketWait:         make(chan struct{}),
 		expectedDisconnect: exsync.NewEvent(),
@@ -618,15 +616,16 @@ func (cli *Client) unlockedConnect(ctx context.Context) error {
 			fs.HTTPHeaders.Set("Origin", cli.SocketConfig.Origin)
 		}
 	}
+	var queue chan *waBinary.Node
 	if err := fs.Connect(ctx); err != nil {
 		fs.Close(0)
 		return err
-	} else if err = cli.doHandshake(fs, *keys.NewKeyPair()); err != nil {
+	} else if queue, err = cli.doHandshake(fs, *keys.NewKeyPair()); err != nil {
 		fs.Close(0)
 		return fmt.Errorf("noise handshake failed: %w", err)
 	}
 	go cli.keepAliveLoop(ctx, fs.Context())
-	go cli.handlerQueueLoop(ctx, fs.Context())
+	go cli.handlerQueueLoop(ctx, fs.Context(), queue)
 	return nil
 }
 
@@ -881,7 +880,15 @@ func (cli *Client) RemoveEventHandlers() {
 	cli.eventHandlersLock.Unlock()
 }
 
-func (cli *Client) handleFrame(ctx context.Context, data []byte) {
+// makeFrameHandler binds a per-connection handler queue into a frame handler, so nodes queued for
+// one connection are never processed by a later connection's handlerQueueLoop.
+func (cli *Client) makeFrameHandler(queue chan *waBinary.Node) func(ctx context.Context, data []byte) {
+	return func(ctx context.Context, data []byte) {
+		cli.handleFrame(ctx, data, queue)
+	}
+}
+
+func (cli *Client) handleFrame(ctx context.Context, data []byte, queue chan *waBinary.Node) {
 	decompressed, err := waBinary.Unpack(data)
 	if err != nil {
 		cli.Log.Warnf("Failed to decompress frame: %v", err)
@@ -932,7 +939,7 @@ func (cli *Client) handleFrame(ctx context.Context, data []byte) {
 	} else if cli.receiveResponse(ctx, node) {
 		// handled
 	} else if cli.hasNodeHandler(node.Tag) {
-		cli.enqueueNode(ctx, node)
+		cli.enqueueNode(ctx, node, queue)
 	} else if node.Tag != "ack" {
 		cli.Log.Debugf("Didn't handle WhatsApp node %s", node.Tag)
 	}
@@ -945,9 +952,9 @@ func (cli *Client) handleOutOfBandNode(node *waBinary.Node) {
 	}
 }
 
-func (cli *Client) enqueueNode(ctx context.Context, node *waBinary.Node) {
+func (cli *Client) enqueueNode(ctx context.Context, node *waBinary.Node, queue chan *waBinary.Node) {
 	select {
-	case cli.handlerQueue <- node:
+	case queue <- node:
 	case <-ctx.Done():
 	default:
 		if cli.forceAutoReconnect.CompareAndSwap(false, true) {
@@ -957,14 +964,14 @@ func (cli *Client) enqueueNode(ctx context.Context, node *waBinary.Node) {
 	}
 }
 
-func (cli *Client) handlerQueueLoop(evtCtx, connCtx context.Context) {
+func (cli *Client) handlerQueueLoop(evtCtx, connCtx context.Context, queue chan *waBinary.Node) {
 	ticker := time.NewTicker(30 * time.Second)
 	ticker.Stop()
 	cli.Log.Debugf("Starting handler queue loop")
 Loop:
 	for {
 		select {
-		case node := <-cli.handlerQueue:
+		case node := <-queue:
 			doneChan := make(chan struct{})
 			start := time.Now()
 			go func() {

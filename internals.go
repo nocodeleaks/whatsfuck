@@ -155,12 +155,16 @@ func (int *DangerousInternalClient) UnlockedDisconnect() {
 	int.c.unlockedDisconnect()
 }
 
-func (int *DangerousInternalClient) HandleFrame(ctx context.Context, data []byte) {
-	int.c.handleFrame(ctx, data)
+func (int *DangerousInternalClient) MakeFrameHandler(queue chan *waBinary.Node) func(context.Context, []byte) {
+	return int.c.makeFrameHandler(queue)
 }
 
-func (int *DangerousInternalClient) HandlerQueueLoop(evtCtx, connCtx context.Context) {
-	int.c.handlerQueueLoop(evtCtx, connCtx)
+func (int *DangerousInternalClient) HandleFrame(ctx context.Context, data []byte, queue chan *waBinary.Node) {
+	int.c.handleFrame(ctx, data, queue)
+}
+
+func (int *DangerousInternalClient) HandlerQueueLoop(evtCtx, connCtx context.Context, queue chan *waBinary.Node) {
+	int.c.handlerQueueLoop(evtCtx, connCtx, queue)
 }
 
 func (int *DangerousInternalClient) SendNodeAndGetData(ctx context.Context, node waBinary.Node) ([]byte, error) {
@@ -283,7 +287,7 @@ func (int *DangerousInternalClient) ParseGroupNotification(node *waBinary.Node) 
 	return int.c.parseGroupNotification(node)
 }
 
-func (int *DangerousInternalClient) DoHandshake(fs *socket.FrameSocket, ephemeralKP keys.KeyPair) error {
+func (int *DangerousInternalClient) DoHandshake(fs *socket.FrameSocket, ephemeralKP keys.KeyPair) (chan *waBinary.Node, error) {
 	return int.c.doHandshake(fs, ephemeralKP)
 }
 

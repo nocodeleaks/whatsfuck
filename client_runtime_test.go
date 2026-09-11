@@ -90,9 +90,6 @@ func TestNewClientDefersSparseState(t *testing.T) {
 	if client.pendingPhoneRerequests != nil || client.responseWaiters != nil || client.tcTokenSenderTS != nil {
 		t.Fatal("request maps allocated before use")
 	}
-	if cap(client.handlerQueue) != handlerQueueSize {
-		t.Fatalf("unexpected handler queue capacity: %d", cap(client.handlerQueue))
-	}
 	if client.mediaHTTP != client.websocketHTTP || client.websocketHTTP != client.preLoginHTTP {
 		t.Fatal("default HTTP clients do not share immutable configuration")
 	}
@@ -103,10 +100,11 @@ func TestNewClientDefersSparseState(t *testing.T) {
 
 func TestHandlerQueueOverflowForcesReconnect(t *testing.T) {
 	client := NewClient(&store.Device{}, waLog.Noop)
-	for range cap(client.handlerQueue) {
-		client.handlerQueue <- &waBinary.Node{Tag: "message"}
+	queue := make(chan *waBinary.Node, handlerQueueSize)
+	for range cap(queue) {
+		queue <- &waBinary.Node{Tag: "message"}
 	}
-	client.enqueueNode(context.Background(), &waBinary.Node{Tag: "message"})
+	client.enqueueNode(context.Background(), &waBinary.Node{Tag: "message"}, queue)
 	if !client.forceAutoReconnect.Load() {
 		t.Fatal("handler queue overflow did not force a reconnect")
 	}
