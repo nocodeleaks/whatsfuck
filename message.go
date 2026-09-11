@@ -436,7 +436,7 @@ func (cli *Client) decryptMessages(ctx context.Context, info *types.MessageInfo,
 			continue
 		}
 
-		if errors.Is(err, EventAlreadyProcessed) {
+		if errors.Is(err, ErrEventAlreadyProcessed) {
 			cli.Log.Debugf("Ignoring message %s from %s: %v", info.ID, info.SourceString(), err)
 			continue
 		} else if errors.Is(err, signalerror.ErrOldCounter) {
@@ -576,7 +576,7 @@ func (cli *Client) bufferedDecrypt(
 				Hex("ciphertext_hash", ciphertextHash[:]).
 				Time("insertion_time", buf.InsertTime).
 				Msg("Returning event already processed error")
-			err = fmt.Errorf("%w at %s", EventAlreadyProcessed, buf.InsertTime.String())
+			err = fmt.Errorf("%w at %s", ErrEventAlreadyProcessed, buf.InsertTime.String())
 			return
 		}
 		zerolog.Ctx(ctx).Debug().
