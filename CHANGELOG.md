@@ -9,6 +9,28 @@ All notable HyperMeow changes are documented here. HyperMeow uses commit pseudo-
 
 ## [Unreleased]
 
+### Upstream sync
+
+Selectively integrated the AI-reviewed official WhatsMeow range `a23afe3..b25a56d` (see `scripts/upstream-review.sh review official`). The overall range verdict was `rejected`; only the 11 individually `approved` commits that applied without touching unresolved generated protobuf state were cherry-picked. `UPSTREAMS.lock.json`'s `official.integrated_commit` is intentionally left at the prior baseline because this was a partial cherry-pick, not the full reviewed-range merge the lock schema tracks — the next official review will re-surface these same commits (expected, and safe, since they are already approved).
+
+Integrated:
+
+- `8d023aa9` user: switch `UpdateBlocklist` to use LIDs (#1137), plus its `197e6174` import-cleanup follow-up.
+- `72f22e67` / `1f6240e6` download: ignore unencrypted media keys for full downloads and thumbnails.
+- `d1cc3c0a` ci: disable goimports on Go 1.26.
+- `bdd4e83f` group: make delete reason optional.
+- `0ca83463` client: guess correct own ID in `ParseWebMessage`.
+- `57796d3d` group: deprecate duplicate topic method.
+- `b25a56d6` send: add chat JID in `SendResponse` (kept alongside the fork's `PHashMismatch` field).
+
+Excluded pending further work:
+
+- `28bfe537` and `9ec8f76d` — the AI review found real bugs (a dropped `stream:error` in the queue-cancellation path, and a QR channel that terminates on ADV-secret rotation instead of continuing). Not integrated; worth reporting upstream.
+- `de26b4ab` and `30593f2a` — protobuf regeneration commits (new AI/device-capability/Labyrinth fields) that conflict with the generated `.pb.go` state left by the skipped `manual_review` commits. Regenerating by hand without `protoc`/`buf` was judged too risky; needs the proto toolchain or the full range.
+- `0dcf1f50`, `b06ae6eb`, `fb386f15`, `6eefbff4`, `4fa34623`, `4650ea95`, `33cfac51`, `0fadda79` — flagged `manual_review`: breaking API removals, incompatible Labyrinth schema changes, a Go 1.26/1.27 minimum-version bump, and a large per-connection queue refactor that all need deliberate adaptation to the fork before integration.
+
+HyperMeow's pending range `f9db181..07d103b` was reviewed and came back `rejected` in full; no commit was cherry-picked (the lone `approved` commit is a no-op on this base per the review).
+
 ### Documentation
 
 - Added an evidence-backed comparison with upstream WhatsMeow.
