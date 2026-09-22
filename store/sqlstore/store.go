@@ -1423,6 +1423,16 @@ const (
 )
 
 func (s *SQLStore) PutMessageSecrets(ctx context.Context, inserts []store.MessageSecretInsert) (err error) {
+	// Filter before batching so empty WASA entries never reach the store or
+	// change the batch parameter count. Keep the caller's slice unchanged.
+	valid := make([]store.MessageSecretInsert, 0, len(inserts))
+	for _, insert := range inserts {
+		if insert.Chat.IsEmpty() || insert.Sender.IsEmpty() || insert.ID == "" || len(insert.Secret) == 0 {
+			continue
+		}
+		valid = append(valid, insert)
+	}
+	inserts = valid
 	if len(inserts) == 0 {
 		return nil
 	}

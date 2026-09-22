@@ -21,6 +21,7 @@ import (
 	waBinary "github.com/nocodeleaks/whatsfuck/binary"
 	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
 	"github.com/nocodeleaks/whatsfuck/proto/waServerSync"
+	"github.com/nocodeleaks/whatsfuck/proto/waSyncAction"
 	"github.com/nocodeleaks/whatsfuck/store"
 	"github.com/nocodeleaks/whatsfuck/types"
 	"github.com/nocodeleaks/whatsfuck/types/events"
@@ -472,6 +473,29 @@ func (cli *Client) dispatchAppState(ctx context.Context, name appstate.WAPatchNa
 			ID:           mutation.Index[1],
 			Action:       mutation.Action.GetQuickReplyAction(),
 			FromFullSync: fullSync,
+		}
+	case appstate.IndexWasaRootSecretAction:
+		if len(mutation.Index) < 2 {
+			return
+		}
+		botJID, _ := types.ParseJID(mutation.Index[1])
+		ownLID := cli.getOwnLID()
+		inputSecrets := mutation.Action.GetWasaRootSecretAction().GetSecrets()
+		ids := make([]string, 0, len(inputSecrets))
+		storeUpdateError = cli.Store.MsgSecrets.PutMessageSecrets(ctx, exslices.CastFunc(inputSecrets, func(secret *waSyncAction.WASARootSecretAction_RootSecretEntry) store.MessageSecretInsert {
+			ids = append(ids, secret.GetID())
+			return store.MessageSecretInsert{
+				Chat:   botJID,
+				Sender: ownLID,
+				ID:     secret.GetID(),
+				Secret: secret.GetRootSecret(),
+			}
+		}))
+		if storeUpdateError == nil {
+			zerolog.Ctx(ctx).Debug().
+				Strs("ids", ids).
+				Stringer("bot_jid", botJID).
+				Msg("Stored WASA root secrets from app state")
 		}
 	}
 	if storeUpdateError != nil {

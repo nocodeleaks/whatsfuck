@@ -98,9 +98,10 @@ type Client struct {
 	recvLog waLog.Logger
 	sendLog waLog.Logger
 
-	socket     *socket.NoiseSocket
-	socketLock sync.RWMutex
-	socketWait chan struct{}
+	socket           *socket.NoiseSocket
+	socketLock       sync.RWMutex
+	socketWait       chan struct{}
+	handlerQueueWait chan struct{}
 
 	isLoggedIn            atomic.Bool
 	paired                atomic.Bool
@@ -562,10 +563,7 @@ func (cli *Client) ConnectContext(ctx context.Context) error {
 		return ErrClientIsNil
 	}
 
-	cli.socketLock.Lock()
-	defer cli.socketLock.Unlock()
-
-	err := cli.unlockedConnect(ctx)
+	err := cli.connect(ctx)
 	if isRetryableConnectError(err) && cli.InitialAutoReconnect && cli.EnableAutoReconnect {
 		cli.Log.Errorf("Initial connection failed but reconnecting in background (%v)", err)
 		go cli.dispatchEvent(&events.Disconnected{})
@@ -576,10 +574,35 @@ func (cli *Client) ConnectContext(ctx context.Context) error {
 }
 
 func (cli *Client) connect(ctx context.Context) error {
-	cli.socketLock.Lock()
-	defer cli.socketLock.Unlock()
+	for {
+		cli.socketLock.Lock()
+		if cli.socket != nil {
+			if cli.socket.IsConnected() {
+				cli.socketLock.Unlock()
+				return ErrAlreadyConnected
+			}
+			cli.unlockedDisconnect()
+		}
+		queueDone := cli.handlerQueueWait
+		if queueDone == nil {
+			err := cli.unlockedConnect(ctx)
+			cli.socketLock.Unlock()
+			return err
+		}
+		cli.socketLock.Unlock()
 
-	return cli.unlockedConnect(ctx)
+		// Stream error handlers may need socketLock themselves (for example,
+		// refreshing CAT). Never hold it while waiting for their queue to finish.
+		if err := cli.waitForHandlerQueue(ctx, queueDone); err != nil {
+			return err
+		}
+		cli.socketLock.Lock()
+		if cli.handlerQueueWait == queueDone {
+			cli.handlerQueueWait = nil
+		}
+		cli.socketLock.Unlock()
+		// Another caller may have connected while the lock was released.
+	}
 }
 
 func (cli *Client) unlockedConnect(ctx context.Context) error {
@@ -624,8 +647,10 @@ func (cli *Client) unlockedConnect(ctx context.Context) error {
 		fs.Close(0)
 		return fmt.Errorf("noise handshake failed: %w", err)
 	}
+	closeWait := make(chan struct{})
+	cli.handlerQueueWait = closeWait
 	go cli.keepAliveLoop(ctx, fs.Context())
-	go cli.handlerQueueLoop(ctx, fs.Context(), queue)
+	go cli.handlerQueueLoop(ctx, fs.Context(), queue, closeWait)
 	return nil
 }
 
@@ -670,6 +695,15 @@ func (cli *Client) isExpectedDisconnect() bool {
 }
 
 func (cli *Client) autoReconnect(ctx context.Context) {
+	cli.socketLock.RLock()
+	queueDone := cli.handlerQueueWait
+	cli.socketLock.RUnlock()
+	if err := cli.waitForHandlerQueue(ctx, queueDone); err != nil {
+		return
+	}
+	if cli.isExpectedDisconnect() {
+		return
+	}
 	if !cli.EnableAutoReconnect || cli.Store.ID == nil {
 		return
 	}
@@ -727,7 +761,9 @@ func (cli *Client) Disconnect() {
 	cli.socketLock.Lock()
 	cli.expectDisconnect()
 	cli.unlockedDisconnect()
+	queueDone := cli.handlerQueueWait
 	cli.socketLock.Unlock()
+	_ = cli.waitForHandlerQueue(context.Background(), queueDone)
 	cli.clearDelayedMessageRequests()
 }
 
@@ -752,6 +788,25 @@ func (cli *Client) unlockedDisconnect() {
 		cli.socket.Stop(true, false)
 		cli.socket = nil
 		cli.clearResponseWaiters(xmlStreamEndNode)
+	}
+	// The caller waits after releasing socketLock so queued stream errors can
+	// finish even when their handler also needs to inspect the socket.
+}
+
+func (cli *Client) waitForHandlerQueue(ctx context.Context, queueDone <-chan struct{}) error {
+	if queueDone == nil {
+		return nil
+	}
+	timer := time.NewTimer(5 * time.Second)
+	defer timer.Stop()
+	select {
+	case <-queueDone:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-timer.C:
+		cli.Log.Warnf("Handler queue wait channel not closed after 5 seconds")
+		return nil
 	}
 }
 
@@ -964,14 +1019,42 @@ func (cli *Client) enqueueNode(ctx context.Context, node *waBinary.Node, queue c
 	}
 }
 
-func (cli *Client) handlerQueueLoop(evtCtx, connCtx context.Context, queue chan *waBinary.Node) {
+func (cli *Client) handlerQueueLoop(evtCtx, connCtx context.Context, queue chan *waBinary.Node, closeWait chan struct{}) {
 	ticker := time.NewTicker(30 * time.Second)
 	ticker.Stop()
 	cli.Log.Debugf("Starting handler queue loop")
+	defer func() {
+	Loop:
+		for {
+			select {
+			case node := <-queue:
+				// Make sure stream errors are handled even after disconnection so the appropriate auto-reconnect is done.
+				// Other pending nodes belong to the closed connection and are discarded.
+				if node.Tag == "stream:error" {
+					cli.Log.Debugf("Handling stream:error node in handler queue loop after context cancellation")
+					cli.handleQueuedStreamError(evtCtx, node)
+				}
+			default:
+				break Loop
+			}
+		}
+		close(closeWait)
+	}()
 Loop:
 	for {
 		select {
 		case node := <-queue:
+			connectionClosed := connCtx.Err() != nil
+			// Stream errors can change the reconnect policy. Wait for that state
+			// even if the socket closes while the handler is already running.
+			if node.Tag == "stream:error" {
+				cli.handleQueuedStreamError(evtCtx, node)
+				continue
+			}
+			if connectionClosed {
+				cli.Log.Debugf("Closing handler queue loop before node handling")
+				return
+			}
 			doneChan := make(chan struct{})
 			start := time.Now()
 			go func() {
@@ -983,11 +1066,15 @@ Loop:
 				}
 			}()
 			ticker.Reset(30 * time.Second)
-			for i := 0; i < 10; i++ {
+			for range 10 {
 				select {
 				case <-doneChan:
 					ticker.Stop()
 					continue Loop
+				case <-connCtx.Done():
+					ticker.Stop()
+					cli.Log.Warnf("Closing handler queue loop in the middle of handling %s", node)
+					return
 				case <-ticker.C:
 					cli.Log.Warnf("Node handling is taking long for %s (started %s ago)", node, time.Since(start))
 				}
@@ -999,6 +1086,12 @@ Loop:
 			return
 		}
 	}
+}
+
+func (cli *Client) handleQueuedStreamError(ctx context.Context, node *waBinary.Node) {
+	policyReady := make(chan struct{})
+	go cli.handleStreamErrorWithPolicy(ctx, node, func() { close(policyReady) })
+	<-policyReady
 }
 
 func (cli *Client) hasNodeHandler(tag string) bool {
