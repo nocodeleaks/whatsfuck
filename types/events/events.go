@@ -41,6 +41,14 @@ type QR struct {
 	Codes []string
 }
 
+// RotateADVSecret is emitted when companion registration refreshes the ADV key.
+// Both values are base64 encoded; pending QR codes must replace OldSecret with
+// NewSecret while keeping the pairing flow open.
+type RotateADVSecret struct {
+	OldSecret string
+	NewSecret string
+}
+
 // PairSuccess is emitted after the QR code has been scanned with the phone and the handshake has
 // been completed. Note that this is generally followed by a websocket reconnection, so you should
 // wait for the Connected before trying to send anything.

@@ -11,9 +11,10 @@ import (
 	sync "sync"
 	unsafe "unsafe"
 
-	waCommon "github.com/nocodeleaks/whatsfuck/proto/waCommon"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+
+	waCommon "github.com/nocodeleaks/whatsfuck/proto/waCommon"
 )
 
 const (

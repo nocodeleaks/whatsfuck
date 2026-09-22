@@ -11,7 +11,7 @@ The review workflow is available through `scripts/upstream-review.sh`. It report
 
 ## HyperMeow candidates compared with upstream WhatsMeow
 
-This comparison was last verified against upstream `main` at [`a23afe3`](https://github.com/tulir/whatsmeow/commit/a23afe3171803f34d6761979988b9d2275e961c7) on 2026-08-11. These are review candidates, not trusted updates. Each candidate must pass the per-commit policy before integration, and each upstream sync must update this section when the difference changes.
+This comparison was rechecked against upstream `main` at [`35ae409`](https://github.com/tulir/whatsmeow/commit/35ae40906e74b6235dab13b69bd15d845f2863d8) on 2026-09-22. The seven HyperMeow candidates through `07d103b` were already integrated or superseded; their individual decisions are recorded in `UPSTREAMS.lock.json`. These are review candidates, not trusted updates. Each candidate must pass the per-commit policy before integration, and each upstream sync must update this section when the difference changes.
 
 | Area | HyperMeow advantage over upstream `main` |
 | --- | --- |

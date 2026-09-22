@@ -1,14 +1,14 @@
 {
   "schema_version": 2,
   "integration_repository": "github.com/nocodeleaks/whatsfuck",
-  "reviewed_at": "2026-08-13T00:00:00Z",
+  "reviewed_at": "2026-09-22T12:52:32.103535+00:00",
   "sources": {
     "official": {
       "remote": "official",
       "repository": "github.com/tulir/whatsmeow",
       "branch": "main",
-      "integrated_commit": "a23afe3171803f34d6761979988b9d2275e961c7",
-      "observed_commit": "a23afe3171803f34d6761979988b9d2275e961c7",
+      "integrated_commit": "35ae40906e74b6235dab13b69bd15d845f2863d8",
+      "observed_commit": "35ae40906e74b6235dab13b69bd15d845f2863d8",
       "trust": "authoritative",
       "integration_strategy": "reviewed-range-merge",
       "role": "WhatsApp protocol compatibility"
@@ -18,10 +18,95 @@
       "repository": "github.com/polymorfa/hypermeow",
       "branch": "main",
       "baseline_commit": "f9db181f1dfa5954790320bcc852125608b4ccba",
-      "reviewed_through": "f9db181f1dfa5954790320bcc852125608b4ccba",
-      "observed_commit": "f9db181f1dfa5954790320bcc852125608b4ccba",
+      "reviewed_through": "07d103b3683c1102ebf9ff9424746121127f9467",
+      "observed_commit": "07d103b3683c1102ebf9ff9424746121127f9467",
       "integrated_commits": [],
-      "decisions": [],
+      "decisions": [
+        {
+          "commit": "8d023aa97355b6444c412a4948cb06c26ba189ca",
+          "verdict": "rejected",
+          "rationale": "Already integrated as 1d96d5d (blocklist LID addressing).",
+          "risks": [
+            "Reapplying duplicates existing changes or regresses the reviewed fork."
+          ],
+          "tests": [
+            "Compared individual patches, merge trees and existing integration history."
+          ],
+          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+        },
+        {
+          "commit": "197e61747d5337f3a255d1d12d3a2c60ac215d64",
+          "verdict": "rejected",
+          "rationale": "Already integrated as 84de934 (import cleanup).",
+          "risks": [
+            "Reapplying duplicates existing changes or regresses the reviewed fork."
+          ],
+          "tests": [
+            "Compared individual patches, merge trees and existing integration history."
+          ],
+          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+        },
+        {
+          "commit": "0dcf1f50f4b1f6060f8e7d2bbd0272766021fe67",
+          "verdict": "rejected",
+          "rationale": "Already integrated as 8c5832a (obsolete group create key).",
+          "risks": [
+            "Reapplying duplicates existing changes or regresses the reviewed fork."
+          ],
+          "tests": [
+            "Compared individual patches, merge trees and existing integration history."
+          ],
+          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+        },
+        {
+          "commit": "b06ae6ebe60f42ec7ea45f02050ebb12d430b07a",
+          "verdict": "rejected",
+          "rationale": "Schema additions were incorporated and superseded by 929ae0e and the current official sync.",
+          "risks": [
+            "Reapplying duplicates existing changes or regresses the reviewed fork."
+          ],
+          "tests": [
+            "Compared individual patches, merge trees and existing integration history."
+          ],
+          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+        },
+        {
+          "commit": "fb386f15283797989565965f5a55cf37e2cf9cff",
+          "verdict": "rejected",
+          "rationale": "Dependency updates were incorporated and superseded; preserve the fork Signal module.",
+          "risks": [
+            "Reapplying duplicates existing changes or regresses the reviewed fork."
+          ],
+          "tests": [
+            "Compared individual patches, merge trees and existing integration history."
+          ],
+          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+        },
+        {
+          "commit": "e091e712be0d455927bdba932d51b4acbad632b1",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; changes already incorporated or superseded.",
+          "risks": [
+            "Reapplying duplicates existing changes or regresses the reviewed fork."
+          ],
+          "tests": [
+            "Compared individual patches, merge trees and existing integration history."
+          ],
+          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+        },
+        {
+          "commit": "07d103b3683c1102ebf9ff9424746121127f9467",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; identical tree to e091e712 and no additional benefit.",
+          "risks": [
+            "Reapplying duplicates existing changes or regresses the reviewed fork."
+          ],
+          "tests": [
+            "Compared individual patches, merge trees and existing integration history."
+          ],
+          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+        }
+      ],
       "trust": "untrusted",
       "integration_strategy": "approved-single-commit-cherry-pick",
       "role": "Optional architectural and production improvements"

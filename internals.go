@@ -123,6 +123,10 @@ func (int *DangerousInternalClient) GetOwnLID() types.JID {
 	return int.c.getOwnLID()
 }
 
+func (int *DangerousInternalClient) GetUserAgent() string {
+	return int.c.getUserAgent()
+}
+
 func (int *DangerousInternalClient) Connect(ctx context.Context) error {
 	return int.c.connect(ctx)
 }
@@ -163,8 +167,14 @@ func (int *DangerousInternalClient) HandleFrame(ctx context.Context, data []byte
 	int.c.handleFrame(ctx, data, queue)
 }
 
-func (int *DangerousInternalClient) HandlerQueueLoop(evtCtx, connCtx context.Context, queue chan *waBinary.Node) {
-	int.c.handlerQueueLoop(evtCtx, connCtx, queue)
+// HandlerQueueLoop accepts an optional completion channel for connection teardown.
+// Omitting it preserves callers of the original three-argument hook.
+func (int *DangerousInternalClient) HandlerQueueLoop(evtCtx, connCtx context.Context, queue chan *waBinary.Node, closeWait ...chan struct{}) {
+	done := make(chan struct{})
+	if len(closeWait) > 0 && closeWait[0] != nil {
+		done = closeWait[0]
+	}
+	int.c.handlerQueueLoop(evtCtx, connCtx, queue, done)
 }
 
 func (int *DangerousInternalClient) SendNodeAndGetData(ctx context.Context, node waBinary.Node) ([]byte, error) {
@@ -405,6 +415,12 @@ func (int *DangerousInternalClient) StoreLIDSyncMessage(ctx context.Context, msg
 
 func (int *DangerousInternalClient) StoreGlobalSettings(ctx context.Context, settings *waHistorySync.GlobalSettings) {
 	int.c.storeGlobalSettings(ctx, settings)
+}
+
+func (int *DangerousInternalClient) StoreCompanionMetaNonce(ctx context.Context, nonce string) {
+	if int.c.updateCompanionMetaNonce(nonce) {
+		int.c.persistCompanionMetaNonce(ctx)
+	}
 }
 
 func (int *DangerousInternalClient) StoreHistoricalPNLIDMappings(ctx context.Context, mappings []*waHistorySync.PhoneNumberToLIDMapping) {

@@ -17,6 +17,20 @@ import (
 )
 
 func (cli *Client) handleStreamError(ctx context.Context, node *waBinary.Node) {
+	cli.handleStreamErrorWithPolicy(ctx, node, nil)
+}
+
+// handleStreamErrorWithPolicy signals when reconnect decisions are safe to read.
+// Manual reconnect callbacks may synchronously disconnect or connect again, so
+// they must not be part of the handler queue's connection-teardown barrier.
+func (cli *Client) handleStreamErrorWithPolicy(ctx context.Context, node *waBinary.Node, policyReady func()) {
+	markPolicyReady := func() {
+		if policyReady != nil {
+			policyReady()
+			policyReady = nil
+		}
+	}
+	defer markPolicyReady()
 	cli.isLoggedIn.Store(false)
 	cli.clearResponseWaiters(node)
 	code, _ := node.Attrs["code"].(string)
@@ -26,6 +40,7 @@ func (cli *Client) handleStreamError(ctx context.Context, node *waBinary.Node) {
 	case code == "515":
 		if cli.DisableLoginAutoReconnect {
 			cli.Log.Infof("Got 515 code, but login autoreconnect is disabled, not reconnecting")
+			markPolicyReady()
 			cli.dispatchEvent(&events.ManualLoginReconnect{})
 			return
 		}

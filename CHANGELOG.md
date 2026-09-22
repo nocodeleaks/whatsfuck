@@ -11,34 +11,27 @@ All notable HyperMeow changes are documented here. HyperMeow uses commit pseudo-
 
 ### Upstream sync
 
-Integrated the AI-reviewed official WhatsMeow range `a23afe3..b25a56d` (see `scripts/upstream-review.sh review official`), commit by commit rather than as the single reviewed-range merge the range's overall `rejected` verdict would have blocked. 19 of the 21 commits are now in, each applied or adapted individually; `UPSTREAMS.lock.json`'s `official.integrated_commit` is intentionally left at the prior baseline because this was commit-by-commit, not the reviewed-range merge the lock schema tracks — the next official review will re-surface this same range (expected and safe, since every included commit was already approved or has been individually adapted here).
+Integrated the complete reviewed official WhatsMeow range `a23afe3..35ae409`
+through 2026-09-21, preserving the previously adapted fork behavior. The
+`UPSTREAMS.lock.json` baseline now records the integrated official head.
 
-Integrated directly:
-
-- `8d023aa9` user: switch `UpdateBlocklist` to use LIDs (#1137), plus its `197e6174` import-cleanup follow-up.
-- `72f22e67` / `1f6240e6` download: ignore unencrypted media keys for full downloads and thumbnails.
-- `d1cc3c0a` ci: disable goimports on Go 1.26.
-- `bdd4e83f` group: make delete reason optional.
-- `0ca83463` client: guess correct own ID in `ParseWebMessage`.
-- `57796d3d` group: deprecate duplicate topic method.
-- `b25a56d6` send: add chat JID in `SendResponse` (kept alongside the fork's `PHashMismatch` field).
-- `0dcf1f50` group: remove the no-op `ReqCreateGroup.CreateKey` (WhatsApp no longer honors it; `JoinedGroup.CreateKey` is untouched).
-
-Integrated with fork-specific adaptation:
-
-- `0fadda79` client,socket: use `fs.Context()` instead of the connect-call context for noise-socket frame consumption, adapted to this fork's ctx-free `doHandshake`/`cli.handleFrame` shape (upstream's own `NoiseHandshake.Finish`/`newNoiseSocket` signatures already matched).
-- `b06ae6eb`, `6eefbff4`, `de26b4ab`, `30593f2a` proto: regenerated the touched packages (new AI/device-capability/Labyrinth fields, incompatible `RotateEpochInput`/`RotateEpochOutput`/`DeviceOutput` schema changes, removed `NewsletterAdminProfileMessageV2`) with `protoc` + `protoc-gen-go` rather than cherry-picked as text, since each file's own module path is length-prefixed inside its serialized `FileDescriptorProto` bytes. No hand-written code outside the generated proto packages referenced the changed types.
-- `fb386f15` dependencies: update (`go.mau.fi/util`, `golang.org/x/crypto`/`net`/`exp`/`text`, `google.golang.org/protobuf`, `petermattis/goid`, toolchain go1.26.6). The fork's alternative libsignal dependency is untouched.
-- `4650ea95` dependencies: bump minimum Go version to 1.26 — go.mod raised to 1.26.0, toolchain to go1.27.0, CI matrix to 1.26/1.27. **Breaking for consumers still on Go 1.25.**
-- `4fa34623` client: don't reuse the handler queue between connections — re-threaded a per-connection queue through `doHandshake`/`handleFrame`/`enqueueNode`/`handlerQueueLoop` instead of the mechanical upstream diff, since this fork's `RawNodeHandler` hook, business out-of-band delivery, Signal-disabled synchronous handoff, and `forceAutoReconnect` overflow policy all needed to keep working unchanged.
-- `33cfac51` ci: enable staticcheck — only the non-refactor parts applied: an internal `ErrEventAlreadyProcessed` reference cleanup and a QR-timeout log fix (see below). The `handlerQueue` field removal in that commit depended on `4fa34623` (now applied separately above); the newsletter.go hunk doesn't apply because this fork's MEX argo decoding is already disabled (`"argo decoding is currently broken"`); everything else in it was already present in the fork's baseline.
-- Ported the two independent fixes from `4650ea955f8`/`33cfac5116293` that didn't depend on the Go-version bump or the queue field: log the QR-timeout event name instead of the struct's default representation, and use `ErrEventAlreadyProcessed` (not the deprecated alias) at its two internal call sites.
-
-Excluded:
-
-- `28bfe537` and `9ec8f76d` — the AI review found real bugs (a dropped `stream:error` in the queue-cancellation path, and a QR channel that terminates on ADV-secret rotation instead of continuing). Not integrated; worth reporting upstream.
-
-HyperMeow's pending range `f9db181..07d103b` was reviewed and came back `rejected` in full; no commit was cherry-picked (the lone `approved` commit is a no-op on this base per the review).
+- Updated WhatsApp Web protobufs and client version to `1047769893`, regenerated
+  with the WhatsFuck module path, and updated the reviewed Go dependencies.
+- Preserved batched Signal/message-secret storage, LID identity behavior,
+  participant-hash reporting, business hooks, and per-connection handler queues.
+  Explicit PN senders retain their supplied LID alias even when the upstream
+  addressing-mode attribute is absent or inconsistent.
+- Added stateless prekey handling, explicit participant phone preference, WASA
+  root-secret storage, bot-message fallback decryption, and root-secret routing.
+- Integrated companion registration refresh with a nonterminal QR event and
+  fixed the upstream cancellation path so an already-dequeued stream error is
+  still processed before the connection queue closes.
+- Corrected the new rich-response JSON parser: malformed typed values return
+  errors, text metadata avoids recursive unmarshalling, and rendering handles
+  missing/null primitives safely. Regression tests cover these cases.
+- Reviewed all seven HyperMeow candidates through `07d103b`: their changes were
+  already integrated or superseded. Recorded each decision without reapplying
+  duplicate code or merging the HyperMeow branch.
 
 ### Documentation
 
