@@ -93,10 +93,16 @@ type deviceCache struct {
 
 // Client contains everything necessary to connect to and interact with the WhatsApp web API.
 type Client struct {
-	Store   *store.Device
-	Log     waLog.Logger
-	recvLog waLog.Logger
-	sendLog waLog.Logger
+	Store *store.Device
+	Log   waLog.Logger
+	// BeforeMessageWrite is checked after encryption and persistence but before
+	// a direct message is written to the WhatsApp socket.
+	BeforeMessageWrite func() error
+	// DatabaseOutageSendActive is set only for a lease-fenced direct send using local
+	// Signal state. Optional relationship-token reads must not wait on SQL.
+	DatabaseOutageSendActive func() bool
+	recvLog                  waLog.Logger
+	sendLog                  waLog.Logger
 
 	socket           *socket.NoiseSocket
 	socketLock       sync.RWMutex

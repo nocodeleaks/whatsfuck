@@ -9,6 +9,14 @@ All notable HyperMeow changes are documented here. HyperMeow uses commit pseudo-
 
 ## [Unreleased]
 
+### Direct message outage hooks
+
+- Added an optional pre-write guard after Signal state persistence and before a
+  direct message is written to the WhatsApp socket.
+- Added an optional database-outage send signal that skips SQL-backed
+  relationship-token reads. Callers must fence session ownership and maintain
+  their own durable Signal state before enabling this mode.
+
 ### Upstream sync
 
 Integrated the complete reviewed official WhatsMeow range `a23afe3..35ae409`

@@ -878,23 +878,34 @@ func (cli *Client) sendDM(
 		node.Content = append(node.GetChildren(), cli.getMessageReportingToken(messagePlaintext, message, ownID, to, id))
 	}
 
-	tcTokenBytes, tcErr := cli.ensureTCToken(ctx, to)
-	if tcErr != nil {
-		cli.Log.Warnf("Failed to get privacy token for %s: %v", to, tcErr)
-	}
-	if len(tcTokenBytes) > 0 {
-		node.Content = append(node.GetChildren(), waBinary.Node{
-			Tag:     "tctoken",
-			Content: tcTokenBytes,
-		})
-	} else if csToken := cli.generateCsToken(ctx, to); len(csToken) > 0 {
-		node.Content = append(node.GetChildren(), waBinary.Node{
-			Tag:     "cstoken",
-			Content: csToken,
-		})
+	databaseOutageSend := cli.DatabaseOutageSendActive != nil && cli.DatabaseOutageSendActive()
+	if !databaseOutageSend {
+		tcTokenBytes, tcErr := cli.ensureTCToken(ctx, to)
+		if tcErr != nil {
+			cli.Log.Warnf("Failed to get privacy token for %s: %v", to, tcErr)
+		}
+		if len(tcTokenBytes) > 0 {
+			node.Content = append(node.GetChildren(), waBinary.Node{
+				Tag:     "tctoken",
+				Content: tcTokenBytes,
+			})
+		} else if csToken := cli.generateCsToken(ctx, to); len(csToken) > 0 {
+			node.Content = append(node.GetChildren(), waBinary.Node{
+				Tag:     "cstoken",
+				Content: csToken,
+			})
+		}
 	}
 
 	start = time.Now()
+	if cli.BeforeMessageWrite != nil {
+		if err = cli.BeforeMessageWrite(); err != nil {
+			return "", nil, fmt.Errorf("direct message write denied: %w", err)
+		}
+	}
+	if databaseOutageSend {
+		cli.Log.Infof("database-outage direct-message socket write authorized")
+	}
 	data, err := cli.sendNodeAndGetData(ctx, *node)
 	timings.Send = time.Since(start)
 	if err != nil {
