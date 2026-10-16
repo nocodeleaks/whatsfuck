@@ -933,6 +933,9 @@ func getTypeFromMessage(msg *waE2E.Message) string {
 	case msg.EphemeralMessage != nil:
 		return getTypeFromMessage(msg.EphemeralMessage.Message)
 	case msg.DocumentWithCaptionMessage != nil:
+		if msg.DocumentWithCaptionMessage.GetMessage().GetButtonsMessage() != nil {
+			return "media"
+		}
 		return getTypeFromMessage(msg.DocumentWithCaptionMessage.Message)
 	case msg.ReactionMessage != nil, msg.EncReactionMessage != nil:
 		return "reaction"
@@ -960,6 +963,9 @@ func getMediaTypeFromMessage(msg *waE2E.Message) string {
 	case msg.EphemeralMessage != nil:
 		return getMediaTypeFromMessage(msg.EphemeralMessage.Message)
 	case msg.DocumentWithCaptionMessage != nil:
+		if msg.DocumentWithCaptionMessage.GetMessage().GetButtonsMessage() != nil {
+			return "button"
+		}
 		return getMediaTypeFromMessage(msg.DocumentWithCaptionMessage.Message)
 	case msg.ExtendedTextMessage != nil && msg.ExtendedTextMessage.Title != nil:
 		return "url"
@@ -1012,11 +1018,18 @@ func getButtonTypeFromMessage(msg *waE2E.Message) string {
 		return getButtonTypeFromMessage(msg.ViewOnceMessageV2Extension.Message)
 	case msg.EphemeralMessage != nil:
 		return getButtonTypeFromMessage(msg.EphemeralMessage.Message)
+	case msg.DocumentWithCaptionMessage != nil:
+		if msg.DocumentWithCaptionMessage.GetMessage().GetButtonsMessage() != nil {
+			return "native_flow"
+		}
+		return getButtonTypeFromMessage(msg.DocumentWithCaptionMessage.Message)
 	case msg.ButtonsMessage != nil:
 		return "buttons"
 	case msg.ListMessage != nil:
 		return "list"
 	case msg.InteractiveMessage != nil && msg.InteractiveMessage.GetNativeFlowMessage() != nil:
+		return "native_flow"
+	case msg.InteractiveMessage != nil && msg.InteractiveMessage.GetCarouselMessage() != nil:
 		return "native_flow"
 	case msg.InteractiveResponseMessage != nil:
 		return "interactive_response"
@@ -1037,11 +1050,33 @@ func buildNativeFlowBizNode(msg *waE2E.Message, nowUnix int64) waBinary.Node {
 			msg = msg.ViewOnceMessageV2Extension.Message
 		case msg.EphemeralMessage != nil:
 			msg = msg.EphemeralMessage.Message
+		case msg.DocumentWithCaptionMessage != nil:
+			msg = msg.DocumentWithCaptionMessage.Message
 		default:
 			goto unwrapped
 		}
 	}
 unwrapped:
+	// Compatibility reference and future updates:
+	// https://github.com/jobasfernandes/zapo-interactive-examples/
+	// Reviewed snapshot: 6df8eedf39ea38fd24b25e694c62413eb48089f0 (zapo-js 1.10.0).
+	// Linked-device buttons and carousels use the minimal mixed envelope.
+	// Forms/catalogs select their parser by name. Keep the existing envelope
+	// for other business flows (such as address_message and galaxy_message).
+	flowName, supported := linkedDeviceFlowName(msg.GetInteractiveMessage())
+	if msg.GetButtonsMessage() != nil {
+		flowName, supported = "mixed", true
+	}
+	if supported {
+		attrs := waBinary.Attrs{"name": flowName, "v": "9"}
+		if flowName == "form_message" || flowName == "catalog_message" {
+			attrs = waBinary.Attrs{"name": flowName}
+		}
+		return waBinary.Node{Tag: "biz", Content: []waBinary.Node{{
+			Tag: "interactive", Attrs: waBinary.Attrs{"type": "native_flow", "v": "1"},
+			Content: []waBinary.Node{{Tag: "native_flow", Attrs: attrs}},
+		}}}
+	}
 	if interactive := msg.GetInteractiveMessage(); interactive != nil {
 		if buttons := interactive.GetNativeFlowMessage().GetButtons(); len(buttons) > 0 && buttons[0].GetName() != "" {
 			candidate := buttons[0].GetName()
@@ -1068,6 +1103,30 @@ unwrapped:
 	}
 }
 
+func linkedDeviceFlowName(message *waE2E.InteractiveMessage) (string, bool) {
+	if message.GetCarouselMessage() != nil {
+		return "mixed", true
+	}
+	buttons := message.GetNativeFlowMessage().GetButtons()
+	if len(buttons) == 1 {
+		switch name := buttons[0].GetName(); name {
+		case "form_message", "catalog_message":
+			return name, true
+		}
+	}
+	if len(buttons) == 0 {
+		return "", false
+	}
+	for _, button := range buttons {
+		switch button.GetName() {
+		case "quick_reply", "cta_url", "cta_call", "cta_copy", "cta_catalog":
+		default:
+			return "", false
+		}
+	}
+	return "mixed", true
+}
+
 func getButtonAttributes(msg *waE2E.Message) waBinary.Attrs {
 	switch {
 	case msg.ViewOnceMessage != nil:
@@ -1078,6 +1137,15 @@ func getButtonAttributes(msg *waE2E.Message) waBinary.Attrs {
 		return getButtonAttributes(msg.ViewOnceMessageV2Extension.Message)
 	case msg.EphemeralMessage != nil:
 		return getButtonAttributes(msg.EphemeralMessage.Message)
+	case msg.DocumentWithCaptionMessage != nil:
+		if msg.DocumentWithCaptionMessage.GetMessage().GetListMessage() != nil {
+			// Wrapped linked-device lists use the product_list stanza companion
+			// even when the encrypted ListMessage is SINGLE_SELECT.
+			// Reference: https://github.com/jobasfernandes/zapo-interactive-examples/
+			// Matching this companion restored delivery and selection replies in the live test.
+			return waBinary.Attrs{"v": "2", "type": "product_list"}
+		}
+		return getButtonAttributes(msg.DocumentWithCaptionMessage.Message)
 	case msg.TemplateMessage != nil:
 		return waBinary.Attrs{}
 	case msg.ListMessage != nil:
