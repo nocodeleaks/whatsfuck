@@ -3,9 +3,10 @@ package whatsmeow
 import (
 	"testing"
 
+	"google.golang.org/protobuf/encoding/protojson"
+
 	waBinary "github.com/nocodeleaks/whatsfuck/binary"
 	"github.com/nocodeleaks/whatsfuck/proto/waE2E"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func TestInteractiveLinkedDeviceBusinessMetadata(t *testing.T) {
