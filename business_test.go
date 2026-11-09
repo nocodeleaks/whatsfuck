@@ -793,6 +793,8 @@ func TestBusinessProductListDescriptionAndOrderTokenAreOptional(t *testing.T) {
 	}
 }
 
+// TestBuildBusinessListAndNativeFlowButtonsMatchWebGenerators checks list row
+// identity and the native InteractiveMessage envelope/version with quote context.
 func TestBuildBusinessListAndNativeFlowButtonsMatchWebGenerators(t *testing.T) {
 	list, err := BuildBusinessListMessage(BusinessListMessageParams{
 		Title: "Support", Description: "Choose a topic", ButtonText: "View topics", Footer: "Synthetic support",
@@ -1129,6 +1131,8 @@ func TestBusinessMessageBuildersRejectUnsafeInputs(t *testing.T) {
 	}
 }
 
+// TestBusinessProductListAndNativeFlowTextLimits keeps product-list and native-flow
+// text ceilings independent by rejecting each overlong field on its own.
 func TestBusinessProductListAndNativeFlowTextLimits(t *testing.T) {
 	owner := types.NewJID("15550001", types.DefaultUserServer)
 	productList := BusinessProductListMessageParams{
@@ -1863,6 +1867,8 @@ func TestBusinessCoverPhotoValidationAndNodes(t *testing.T) {
 	}
 }
 
+// TestNativeButtonsWebConstraintsAndBusinessMetadata checks reply/CTA count and
+// mixing rules together with the relay metadata selected for each valid category.
 func TestNativeButtonsWebConstraintsAndBusinessMetadata(t *testing.T) {
 	reply := BusinessNativeFlowButton{Name: "quick_reply", ParamsJSON: `{"display_text":"Reply","id":"synthetic"}`}
 	url := BusinessNativeFlowButton{Name: "cta_url", ParamsJSON: `{"display_text":"Open","url":"https://example.com"}`}
