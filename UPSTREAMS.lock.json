@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "integration_repository": "github.com/nocodeleaks/whatsfuck",
-  "reviewed_at": "2026-11-09T21:11:44Z",
+  "reviewed_at": "2026-11-09T21:29:26Z",
   "sources": {
     "official": {
       "remote": "official",
@@ -18,9 +18,30 @@
       "repository": "github.com/polymorfa/hypermeow",
       "branch": "main",
       "baseline_commit": "f9db181f1dfa5954790320bcc852125608b4ccba",
-      "reviewed_through": "07d103b3683c1102ebf9ff9424746121127f9467",
-      "observed_commit": "07d103b3683c1102ebf9ff9424746121127f9467",
-      "integrated_commits": [],
+      "reviewed_through": "f43219816d8600ec963371881a1467d22fa7b3e6",
+      "observed_commit": "f43219816d8600ec963371881a1467d22fa7b3e6",
+      "integrated_commits": [
+        "092a7b4b3c3293c6d3291aeb515387893fe0aa46",
+        "36cfb0947f783b639207caf39c445652740b22f4",
+        "4d774e30c930d86a2f6e9c3846c26c043818c8bf",
+        "62df75e17b9042aa02ace57b73945636709681a9",
+        "639a4b8b05bc42fb433b30e8120da74c91f12dd2",
+        "6fb8486760bbdc87f614360e3b4042a90a9e37cc",
+        "7e4e1c0237bcde113418241d8b2b78a22717ee97",
+        "886383c2c29df0d1d9dfaf9e263b47ae58568991",
+        "8edf97a0ce362caf1b63bc5533e6b73d91c60d3e",
+        "8f2ed529a44d1e5395c0da05adf2327b57cf85cb",
+        "90f9e4ec2c88ddc8dda3de40bf1344cf027cbf9a",
+        "9c6bf2c91afeb7f098946613fc310ec89b1729e9",
+        "a1a6ad6940796aa3301edcca192a7b3777734674",
+        "ad800d86f461e08cc0a0de409dd088ae547231d8",
+        "afb4aab3146a606389a278147e7fd7e8b9467fc1",
+        "baca49525d3b3f7d7401d8b8f5c28f8ebbb0e7d6",
+        "baf736b76d0a9eac32afb67d2cf0ec3584f3ca44",
+        "c50f0c5ce143bb7d2d36755fdaf4b27b326bf795",
+        "f5f56be6896434d6a4a65d303a695e868d0441e5",
+        "ff99cde0ab2e60bc2c5a29f412e483c5eabf7341"
+      ],
       "decisions": [
         {
           "commit": "8d023aa97355b6444c412a4948cb06c26ba189ca",
@@ -83,28 +104,912 @@
           "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
         },
         {
-          "commit": "e091e712be0d455927bdba932d51b4acbad632b1",
-          "verdict": "rejected",
-          "rationale": "Merge commits are excluded by policy; changes already incorporated or superseded.",
+          "commit": "baf736b76d0a9eac32afb67d2cf0ec3584f3ca44",
+          "verdict": "approved",
+          "rationale": "Integrated as 386a1f1. Derives stanza type and mediatype from associatedChildMessage; an HD child was sent as text without mediatype.",
           "risks": [
-            "Reapplying duplicates existing changes or regresses the reviewed fork."
+            "Send-side only; additive."
           ],
           "tests": [
-            "Compared individual patches, merge trees and existing integration history."
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
           ],
-          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "8edf97a0ce362caf1b63bc5533e6b73d91c60d3e",
+          "verdict": "approved",
+          "rationale": "Integrated as 2f87659/68bdf91 (CI workflow hunk dropped). UnwrapRaw opens associatedChildMessage, sets IsAssociatedChild and overlays the wrapper context on a clone.",
+          "risks": [
+            "On by default: consumers reading Message.AssociatedChildMessage after UnwrapRaw must use IsAssociatedChild or RawMessage."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "ad800d86f461e08cc0a0de409dd088ae547231d8",
+          "verdict": "approved",
+          "rationale": "Integrated as 2f87659/68bdf91 (CI workflow hunk dropped). UnwrapRaw opens associatedChildMessage, sets IsAssociatedChild and overlays the wrapper context on a clone.",
+          "risks": [
+            "On by default: consumers reading Message.AssociatedChildMessage after UnwrapRaw must use IsAssociatedChild or RawMessage."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "7668f7aeba5c8157240c4734e9ce244ed7eb6f00",
+          "verdict": "rejected",
+          "rationale": "Superseded by official d5f354c (atomic onDisconnect); the patch targets an exported mutex-guarded field that no longer exists and its test depends on it.",
+          "risks": [
+            "Reapplying would reintroduce an exported OnDisconnect field."
+          ],
+          "tests": [
+            "Compared with the merged official socket code."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "9c9a065a961b28148135dbc4b148cc4226dde043",
+          "verdict": "rejected",
+          "rationale": "Superseded by official d5f354c (atomic onDisconnect); the patch targets an exported mutex-guarded field that no longer exists and its test depends on it.",
+          "risks": [
+            "Reapplying would reintroduce an exported OnDisconnect field."
+          ],
+          "tests": [
+            "Compared with the merged official socket code."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "a682fb733523c4743870721c01f9a3804782f838",
+          "verdict": "rejected",
+          "rationale": "HyperMeow CI/tooling pin; not applicable to the fork workflow.",
+          "risks": [],
+          "tests": [
+            "Patch inspection."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "a0fe3f883e23242f934676d96adf5938b7e8aed3",
+          "verdict": "rejected",
+          "rationale": "HyperMeow CI/tooling pin; not applicable to the fork workflow.",
+          "risks": [],
+          "tests": [
+            "Patch inspection."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "39ba534709bede1080f99889ced78729544c5ac1",
+          "verdict": "rejected",
+          "rationale": "HyperMeow CI/tooling pin; not applicable to the fork workflow.",
+          "risks": [],
+          "tests": [
+            "Patch inspection."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "c50f0c5ce143bb7d2d36755fdaf4b27b326bf795",
+          "verdict": "approved",
+          "rationale": "Integrated as 65fecc6 (adapted; 4d774e3 import-path rewrite folded in for the fork module). Opt-in headless shadow Client: every hook is guarded by a non-nil shadowRelay.",
+          "risks": [
+            "New public API (ShadowRelay, NewShadowClient, InjectNode).",
+            "The seeded store keeps live Signal stores; identity-change, PN-to-LID migration and pairing paths are not shadow-guarded.",
+            "The relay is trusted with raw nodes, plaintext and prekey bundles.",
+            "InjectNode uses the fork's hasNodeHandler/handleNode instead of HyperMeow's nodeHandlers map."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "4d774e30c930d86a2f6e9c3846c26c043818c8bf",
+          "verdict": "approved",
+          "rationale": "Integrated as 65fecc6 (adapted; 4d774e3 import-path rewrite folded in for the fork module). Opt-in headless shadow Client: every hook is guarded by a non-nil shadowRelay.",
+          "risks": [
+            "New public API (ShadowRelay, NewShadowClient, InjectNode).",
+            "The seeded store keeps live Signal stores; identity-change, PN-to-LID migration and pairing paths are not shadow-guarded.",
+            "The relay is trusted with raw nodes, plaintext and prekey bundles.",
+            "InjectNode uses the fork's hasNodeHandler/handleNode instead of HyperMeow's nodeHandlers map."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "36cfb0947f783b639207caf39c445652740b22f4",
+          "verdict": "approved",
+          "rationale": "Integrated as e193422/85c1b6a. Shadow fails closed on group traffic, rejects nil and typed-nil relays and sends no retry receipt for unsupported group ciphertext.",
+          "risks": [
+            "Shadow-only paths."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "90f9e4ec2c88ddc8dda3de40bf1344cf027cbf9a",
+          "verdict": "approved",
+          "rationale": "Integrated as e193422/85c1b6a. Shadow fails closed on group traffic, rejects nil and typed-nil relays and sends no retry receipt for unsupported group ciphertext.",
+          "risks": [
+            "Shadow-only paths."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "62df75e17b9042aa02ace57b73945636709681a9",
+          "verdict": "approved",
+          "rationale": "PARTIAL, integrated as 9f4e734: only the shadow key-mutation guards (message.go, prekeys.go, retry.go, sendfb.go, shadow.go, shadow_test.go). The notification.go AB props timeout and its test were not applied because cd832fd is not integrated.",
+          "risks": [
+            "Partial application of an upstream commit; the AB props half remains pending with cd832fd."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "775cffcca2c4a041fc40e8c4834704be6e599a2c",
+          "verdict": "rejected",
+          "rationale": "Restores a per-Client nodeHandlers map and rewrites handleNode; would change the fork's dispatch path for no gain. Only its Stringer logging form was used inside 65fecc6.",
+          "risks": [
+            "Would regress the fork's closed-switch dispatch."
+          ],
+          "tests": [
+            "Patch inspection; shadow tests pass against the fork dispatch."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "194b6e8639cb584ceb238f8b7041dab236d9cbd4",
+          "verdict": "rejected",
+          "rationale": "Restores a per-Client nodeHandlers map and rewrites handleNode; would change the fork's dispatch path for no gain. Only its Stringer logging form was used inside 65fecc6.",
+          "risks": [
+            "Would regress the fork's closed-switch dispatch."
+          ],
+          "tests": [
+            "Patch inspection; shadow tests pass against the fork dispatch."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "6126b83f4fba00c23326e3871e66f9249a0b1141",
+          "verdict": "rejected",
+          "rationale": "Rebased duplicate of the shadow series already decided (c50f0c5, 4d774e3, 36cfb09, 90f9e4e).",
+          "risks": [],
+          "tests": [
+            "Compared patches with their twins."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "7c5f782f4974727529276025c09514dcfc55ee84",
+          "verdict": "rejected",
+          "rationale": "Rebased duplicate of the shadow series already decided (c50f0c5, 4d774e3, 36cfb09, 90f9e4e).",
+          "risks": [],
+          "tests": [
+            "Compared patches with their twins."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "d94919d8400f4f5a6e14190e4ed16a12c24f7f3e",
+          "verdict": "rejected",
+          "rationale": "Rebased duplicate of the shadow series already decided (c50f0c5, 4d774e3, 36cfb09, 90f9e4e).",
+          "risks": [],
+          "tests": [
+            "Compared patches with their twins."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "49a8071190398dc0bbc563f55791dcdb3ca587bf",
+          "verdict": "rejected",
+          "rationale": "Rebased duplicate of the shadow series already decided (c50f0c5, 4d774e3, 36cfb09, 90f9e4e).",
+          "risks": [],
+          "tests": [
+            "Compared patches with their twins."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "cd832fd77e29b55dc2b1afe58e6061f489151ad5",
+          "verdict": "manual_review",
+          "rationale": "Opt-in Client.ServerABPropsSync hook that defers server AB props acks; no consumer exists in the fork. Requires the notification.go hunk of 62df75e (2-minute task bound) if adopted.",
+          "risks": [
+            "A failing hook withholds the ack; beyond 256 pending notifications further ones are dropped without ack or log.",
+            "A deferred notification skips maybeDeferredAck and the rest of handleNotification."
+          ],
+          "tests": [
+            "Patch inspection only; not applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "05c0ccb2ad36d7b3976e15a07e67ea09afa92638",
+          "verdict": "manual_review",
+          "rationale": "Opt-in Client.ServerABPropsSync hook that defers server AB props acks; no consumer exists in the fork. Requires the notification.go hunk of 62df75e (2-minute task bound) if adopted.",
+          "risks": [
+            "A failing hook withholds the ack; beyond 256 pending notifications further ones are dropped without ack or log.",
+            "A deferred notification skips maybeDeferredAck and the rest of handleNotification."
+          ],
+          "tests": [
+            "Patch inspection only; not applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "bb87f2cefb8855f4db258abc217e8756d02db626",
+          "verdict": "manual_review",
+          "rationale": "Opt-in Client.ServerABPropsSync hook that defers server AB props acks; no consumer exists in the fork. Requires the notification.go hunk of 62df75e (2-minute task bound) if adopted.",
+          "risks": [
+            "A failing hook withholds the ack; beyond 256 pending notifications further ones are dropped without ack or log.",
+            "A deferred notification skips maybeDeferredAck and the rest of handleNotification."
+          ],
+          "tests": [
+            "Patch inspection only; not applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "6fb8486760bbdc87f614360e3b4042a90a9e37cc",
+          "verdict": "approved",
+          "rationale": "Integrated as 567f1b6..a9df682 (CI workflow hunks dropped; fork README/CHANGELOG kept with only the new sections added). Opt-in SocketConfig.RaceURLs dials web.whatsapp.com:443 and :5222 concurrently through the same HTTP client; official d5f354c, d24d079, 2fc844f, f1b7985 and 3d913f0 are preserved. 886383c only adds MIT copyright headers.",
+          "risks": [
+            "Off by default; two connections per connect when enabled.",
+            "Port 5222 endpoint and the claim that WhatsApp Web races both are not verifiable from the patch.",
+            "isRetryableConnectError now classifies an HTTP status before network errors.",
+            "Client.DisablePostConnectPassiveIQ (default false) can skip the post-connect passive IQ."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./...",
+            "go test -race -count=5 ./socket/..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "9c6bf2c91afeb7f098946613fc310ec89b1729e9",
+          "verdict": "approved",
+          "rationale": "Integrated as 567f1b6..a9df682 (CI workflow hunks dropped; fork README/CHANGELOG kept with only the new sections added). Opt-in SocketConfig.RaceURLs dials web.whatsapp.com:443 and :5222 concurrently through the same HTTP client; official d5f354c, d24d079, 2fc844f, f1b7985 and 3d913f0 are preserved. 886383c only adds MIT copyright headers.",
+          "risks": [
+            "Off by default; two connections per connect when enabled.",
+            "Port 5222 endpoint and the claim that WhatsApp Web races both are not verifiable from the patch.",
+            "isRetryableConnectError now classifies an HTTP status before network errors.",
+            "Client.DisablePostConnectPassiveIQ (default false) can skip the post-connect passive IQ."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./...",
+            "go test -race -count=5 ./socket/..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "639a4b8b05bc42fb433b30e8120da74c91f12dd2",
+          "verdict": "approved",
+          "rationale": "Integrated as 567f1b6..a9df682 (CI workflow hunks dropped; fork README/CHANGELOG kept with only the new sections added). Opt-in SocketConfig.RaceURLs dials web.whatsapp.com:443 and :5222 concurrently through the same HTTP client; official d5f354c, d24d079, 2fc844f, f1b7985 and 3d913f0 are preserved. 886383c only adds MIT copyright headers.",
+          "risks": [
+            "Off by default; two connections per connect when enabled.",
+            "Port 5222 endpoint and the claim that WhatsApp Web races both are not verifiable from the patch.",
+            "isRetryableConnectError now classifies an HTTP status before network errors.",
+            "Client.DisablePostConnectPassiveIQ (default false) can skip the post-connect passive IQ."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./...",
+            "go test -race -count=5 ./socket/..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "ff99cde0ab2e60bc2c5a29f412e483c5eabf7341",
+          "verdict": "approved",
+          "rationale": "Integrated as 567f1b6..a9df682 (CI workflow hunks dropped; fork README/CHANGELOG kept with only the new sections added). Opt-in SocketConfig.RaceURLs dials web.whatsapp.com:443 and :5222 concurrently through the same HTTP client; official d5f354c, d24d079, 2fc844f, f1b7985 and 3d913f0 are preserved. 886383c only adds MIT copyright headers.",
+          "risks": [
+            "Off by default; two connections per connect when enabled.",
+            "Port 5222 endpoint and the claim that WhatsApp Web races both are not verifiable from the patch.",
+            "isRetryableConnectError now classifies an HTTP status before network errors.",
+            "Client.DisablePostConnectPassiveIQ (default false) can skip the post-connect passive IQ."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./...",
+            "go test -race -count=5 ./socket/..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "afb4aab3146a606389a278147e7fd7e8b9467fc1",
+          "verdict": "approved",
+          "rationale": "Integrated as 567f1b6..a9df682 (CI workflow hunks dropped; fork README/CHANGELOG kept with only the new sections added). Opt-in SocketConfig.RaceURLs dials web.whatsapp.com:443 and :5222 concurrently through the same HTTP client; official d5f354c, d24d079, 2fc844f, f1b7985 and 3d913f0 are preserved. 886383c only adds MIT copyright headers.",
+          "risks": [
+            "Off by default; two connections per connect when enabled.",
+            "Port 5222 endpoint and the claim that WhatsApp Web races both are not verifiable from the patch.",
+            "isRetryableConnectError now classifies an HTTP status before network errors.",
+            "Client.DisablePostConnectPassiveIQ (default false) can skip the post-connect passive IQ."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./...",
+            "go test -race -count=5 ./socket/..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "baca49525d3b3f7d7401d8b8f5c28f8ebbb0e7d6",
+          "verdict": "approved",
+          "rationale": "Integrated as 567f1b6..a9df682 (CI workflow hunks dropped; fork README/CHANGELOG kept with only the new sections added). Opt-in SocketConfig.RaceURLs dials web.whatsapp.com:443 and :5222 concurrently through the same HTTP client; official d5f354c, d24d079, 2fc844f, f1b7985 and 3d913f0 are preserved. 886383c only adds MIT copyright headers.",
+          "risks": [
+            "Off by default; two connections per connect when enabled.",
+            "Port 5222 endpoint and the claim that WhatsApp Web races both are not verifiable from the patch.",
+            "isRetryableConnectError now classifies an HTTP status before network errors.",
+            "Client.DisablePostConnectPassiveIQ (default false) can skip the post-connect passive IQ."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./...",
+            "go test -race -count=5 ./socket/..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "886383c2c29df0d1d9dfaf9e263b47ae58568991",
+          "verdict": "approved",
+          "rationale": "Integrated as 567f1b6..a9df682 (CI workflow hunks dropped; fork README/CHANGELOG kept with only the new sections added). Opt-in SocketConfig.RaceURLs dials web.whatsapp.com:443 and :5222 concurrently through the same HTTP client; official d5f354c, d24d079, 2fc844f, f1b7985 and 3d913f0 are preserved. 886383c only adds MIT copyright headers.",
+          "risks": [
+            "Off by default; two connections per connect when enabled.",
+            "Port 5222 endpoint and the claim that WhatsApp Web races both are not verifiable from the patch.",
+            "isRetryableConnectError now classifies an HTTP status before network errors.",
+            "Client.DisablePostConnectPassiveIQ (default false) can skip the post-connect passive IQ."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./...",
+            "go test -race -count=5 ./socket/..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "d4c58f25a076abe72dac29b4369bca699cf4b8b5",
+          "verdict": "manual_review",
+          "rationale": "Remote Signal keys (PR #48): strictly opt-in via NewRemoteSignalClient, no hidden network or key exfiltration, default paths unchanged. Not integrated: it is a new key trust boundary that needs an owner decision, the five commits must be taken as a unit, and it depends on isTypedNil/InjectNode from the shadow series.",
+          "risks": [
+            "AppStateKeyShare applied without the IsFromMe gate.",
+            "Signed prekey signature from RemoteIdentity is not verified locally.",
+            "decryptMessagesRemote copies a stale decrypt path (ack before dispatch, ignores handlerFailed, no meta decrypt-fail fallback).",
+            "SendPrebuiltStanza and remote resends bypass the fork's BeforeMessageWrite guard.",
+            "Unbounded remoteMigratedPN map; ADV secret rotation is local only; zero private keys persisted without a RemoteKeys sentinel."
+          ],
+          "tests": [
+            "Probe cherry-picks with shims: build, vet, test and race passed; worktree reset, nothing applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "86ec61602d68173a6f8c767e75b5c7123e95559d",
+          "verdict": "manual_review",
+          "rationale": "Remote Signal keys (PR #48): strictly opt-in via NewRemoteSignalClient, no hidden network or key exfiltration, default paths unchanged. Not integrated: it is a new key trust boundary that needs an owner decision, the five commits must be taken as a unit, and it depends on isTypedNil/InjectNode from the shadow series.",
+          "risks": [
+            "AppStateKeyShare applied without the IsFromMe gate.",
+            "Signed prekey signature from RemoteIdentity is not verified locally.",
+            "decryptMessagesRemote copies a stale decrypt path (ack before dispatch, ignores handlerFailed, no meta decrypt-fail fallback).",
+            "SendPrebuiltStanza and remote resends bypass the fork's BeforeMessageWrite guard.",
+            "Unbounded remoteMigratedPN map; ADV secret rotation is local only; zero private keys persisted without a RemoteKeys sentinel."
+          ],
+          "tests": [
+            "Probe cherry-picks with shims: build, vet, test and race passed; worktree reset, nothing applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "a4e906e43790e819460442f61cac37dbd42926f9",
+          "verdict": "manual_review",
+          "rationale": "Remote Signal keys (PR #48): strictly opt-in via NewRemoteSignalClient, no hidden network or key exfiltration, default paths unchanged. Not integrated: it is a new key trust boundary that needs an owner decision, the five commits must be taken as a unit, and it depends on isTypedNil/InjectNode from the shadow series.",
+          "risks": [
+            "AppStateKeyShare applied without the IsFromMe gate.",
+            "Signed prekey signature from RemoteIdentity is not verified locally.",
+            "decryptMessagesRemote copies a stale decrypt path (ack before dispatch, ignores handlerFailed, no meta decrypt-fail fallback).",
+            "SendPrebuiltStanza and remote resends bypass the fork's BeforeMessageWrite guard.",
+            "Unbounded remoteMigratedPN map; ADV secret rotation is local only; zero private keys persisted without a RemoteKeys sentinel."
+          ],
+          "tests": [
+            "Probe cherry-picks with shims: build, vet, test and race passed; worktree reset, nothing applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "3bbdfa9c5e0b252ded2535da8cc6ccf49fba1388",
+          "verdict": "manual_review",
+          "rationale": "Remote Signal keys (PR #48): strictly opt-in via NewRemoteSignalClient, no hidden network or key exfiltration, default paths unchanged. Not integrated: it is a new key trust boundary that needs an owner decision, the five commits must be taken as a unit, and it depends on isTypedNil/InjectNode from the shadow series.",
+          "risks": [
+            "AppStateKeyShare applied without the IsFromMe gate.",
+            "Signed prekey signature from RemoteIdentity is not verified locally.",
+            "decryptMessagesRemote copies a stale decrypt path (ack before dispatch, ignores handlerFailed, no meta decrypt-fail fallback).",
+            "SendPrebuiltStanza and remote resends bypass the fork's BeforeMessageWrite guard.",
+            "Unbounded remoteMigratedPN map; ADV secret rotation is local only; zero private keys persisted without a RemoteKeys sentinel."
+          ],
+          "tests": [
+            "Probe cherry-picks with shims: build, vet, test and race passed; worktree reset, nothing applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "7e3393b9a6f98eaedb5fe3fb44fdd944e808c143",
+          "verdict": "manual_review",
+          "rationale": "Remote Signal keys (PR #48): strictly opt-in via NewRemoteSignalClient, no hidden network or key exfiltration, default paths unchanged. Not integrated: it is a new key trust boundary that needs an owner decision, the five commits must be taken as a unit, and it depends on isTypedNil/InjectNode from the shadow series.",
+          "risks": [
+            "AppStateKeyShare applied without the IsFromMe gate.",
+            "Signed prekey signature from RemoteIdentity is not verified locally.",
+            "decryptMessagesRemote copies a stale decrypt path (ack before dispatch, ignores handlerFailed, no meta decrypt-fail fallback).",
+            "SendPrebuiltStanza and remote resends bypass the fork's BeforeMessageWrite guard.",
+            "Unbounded remoteMigratedPN map; ADV secret rotation is local only; zero private keys persisted without a RemoteKeys sentinel."
+          ],
+          "tests": [
+            "Probe cherry-picks with shims: build, vet, test and race passed; worktree reset, nothing applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "4f60a67410c9c5d099d2e2f4fcf4facd8c42d777",
+          "verdict": "rejected",
+          "rationale": "Duplicate (identical patch-id) of 3bbdfa9, 7e3393b and 1c08e56.",
+          "risks": [],
+          "tests": [
+            "git patch-id comparison."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "7b77e9876c4058e6e2ec52f9ef688812826173ee",
+          "verdict": "rejected",
+          "rationale": "Duplicate (identical patch-id) of 3bbdfa9, 7e3393b and 1c08e56.",
+          "risks": [],
+          "tests": [
+            "git patch-id comparison."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "42c2b22998fd92606638db237db4bb0dfb6e597a",
+          "verdict": "rejected",
+          "rationale": "Duplicate (identical patch-id) of 3bbdfa9, 7e3393b and 1c08e56.",
+          "risks": [],
+          "tests": [
+            "git patch-id comparison."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "1c08e560587c16b87a27635e5d5fc4373459cd07",
+          "verdict": "rejected",
+          "rationale": "Socket half superseded by official d5f354c; the lifecycle observer half is a new API with no use in the fork and its tests depend on the remote Signal feature.",
+          "risks": [
+            "The socket half would reintroduce an exported, racy OnDisconnect field."
+          ],
+          "tests": [
+            "Probe with socket hunks dropped passed under -race; not applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "cb9505cad53726f0fce934750d25bf097ee3dd49",
+          "verdict": "rejected",
+          "rationale": "Socket half superseded by official d5f354c; the lifecycle observer half is a new API with no use in the fork and its tests depend on the remote Signal feature.",
+          "risks": [
+            "The socket half would reintroduce an exported, racy OnDisconnect field."
+          ],
+          "tests": [
+            "Probe with socket hunks dropped passed under -race; not applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "8f2ed529a44d1e5395c0da05adf2327b57cf85cb",
+          "verdict": "approved",
+          "rationale": "Integrated as 3d4bad6. BuildBusinessNativeFlowButtonsMessage now emits the canonical InteractiveMessage native flow; the fork send path already maps it to biz/interactive/native_flow. One test expectation kept the fork's 'mixed' flow name.",
+          "risks": [
+            "Builder return shape changes from ButtonsMessage to InteractiveMessage.",
+            "Unknown button names are rejected; text bounds loosen from 1024/60/60 to 4096/256/256."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "a1a6ad6940796aa3301edcca192a7b3777734674",
+          "verdict": "approved",
+          "rationale": "Integrated as a6c330b, ee20e66, ba7ed94, dc5c06c. Bounded image/video carousel builder, exact-key reply ID validation (closes a case-insensitive JSON alias bypass), test helper cleanup and code comments. The duplicate carousel send.go hunk was dropped; 092a7b4 comments kept only for applied code.",
+          "risks": [
+            "New public API: BuildBusinessCarouselMessage."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "f5f56be6896434d6a4a65d303a695e868d0441e5",
+          "verdict": "approved",
+          "rationale": "Integrated as a6c330b, ee20e66, ba7ed94, dc5c06c. Bounded image/video carousel builder, exact-key reply ID validation (closes a case-insensitive JSON alias bypass), test helper cleanup and code comments. The duplicate carousel send.go hunk was dropped; 092a7b4 comments kept only for applied code.",
+          "risks": [
+            "New public API: BuildBusinessCarouselMessage."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "7e4e1c0237bcde113418241d8b2b78a22717ee97",
+          "verdict": "approved",
+          "rationale": "Integrated as a6c330b, ee20e66, ba7ed94, dc5c06c. Bounded image/video carousel builder, exact-key reply ID validation (closes a case-insensitive JSON alias bypass), test helper cleanup and code comments. The duplicate carousel send.go hunk was dropped; 092a7b4 comments kept only for applied code.",
+          "risks": [
+            "New public API: BuildBusinessCarouselMessage."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "092a7b4b3c3293c6d3291aeb515387893fe0aa46",
+          "verdict": "approved",
+          "rationale": "Integrated as a6c330b, ee20e66, ba7ed94, dc5c06c. Bounded image/video carousel builder, exact-key reply ID validation (closes a case-insensitive JSON alias bypass), test helper cleanup and code comments. The duplicate carousel send.go hunk was dropped; 092a7b4 comments kept only for applied code.",
+          "risks": [
+            "New public API: BuildBusinessCarouselMessage."
+          ],
+          "tests": [
+            "go build ./...",
+            "go vet ./...",
+            "go test ./...",
+            "go test -race . ./socket/... ./store/...",
+            "GOOS=js GOARCH=wasm go build ./..."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "314e370807f4cdfedaa43c1f2ece0913412aa34e",
+          "verdict": "manual_review",
+          "rationale": "Relaxes native list bounds (rows 10 to 30, texts 24 to 256, description 72 to 1024, optional section titles) with a justification that cannot be verified from the patch.",
+          "risks": [
+            "Lists accepted by the builder may be rejected by the server or phone."
+          ],
+          "tests": [
+            "Trial run passed, then reset; not applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "66a3446b993626e182cf76c5c7fd6b67e64071eb",
+          "verdict": "manual_review",
+          "rationale": "Hydrated template buttons emit an empty hsm node beside biz; HyperMeow's own open PR #57 (98e4884) removes it as a server rejection/logout risk for linked devices. Take together with e87dfb2 and the PR #57 fix once it lands.",
+          "risks": [
+            "Ships a send-path behavior its maintainer is reverting."
+          ],
+          "tests": [
+            "Patch inspection; not applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "7d5e4134a69027627df16cc8a0d2c501a412a1fb",
+          "verdict": "manual_review",
+          "rationale": "Hydrated template buttons emit an empty hsm node beside biz; HyperMeow's own open PR #57 (98e4884) removes it as a server rejection/logout risk for linked devices. Take together with e87dfb2 and the PR #57 fix once it lands.",
+          "risks": [
+            "Ships a send-path behavior its maintainer is reverting."
+          ],
+          "tests": [
+            "Patch inspection; not applied."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "e87dfb2d5f70999a52b4dad2c7dee3469e28e2ed",
+          "verdict": "rejected",
+          "rationale": "Test-only and depends on business_hydrated.go from 66a3446, which is not integrated.",
+          "risks": [],
+          "tests": [
+            "Patch inspection."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "e091e712be0d455927bdba932d51b4acbad632b1",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
         },
         {
           "commit": "07d103b3683c1102ebf9ff9424746121127f9467",
           "verdict": "rejected",
-          "rationale": "Merge commits are excluded by policy; identical tree to e091e712 and no additional benefit.",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
           "risks": [
-            "Reapplying duplicates existing changes or regresses the reviewed fork."
+            "Merging would bypass the per-commit review."
           ],
           "tests": [
-            "Compared individual patches, merge trees and existing integration history."
+            "Inspected merge resolutions for changes that exist only in the merge."
           ],
-          "reviewed_at": "2026-09-22T12:52:32.103535+00:00"
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "e2ebbc25f5af93f6068b4cc856bd49b5e415e841",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "fc02f77da54759b327a214e9fbe9bdb775e96277",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "c4dca58842df537be9f072ac83daedc2d472c2cc",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "29a42459a4d12ffc9553f6279610106d31c8a148",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "f217fad032a9863c011911c8206099ab90ba01b0",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "9f40228a8de4dad6bdfe9a30f962cd925b91546c",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "dc52248de8f0624f59b6b1e62b491ff317370484",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "b0e8e85a40754fc56031623f1f19811ddec1ce6a",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "ac1f27038dda9a226560bc9323a501d645e50b12",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "97b87d706f957a7b95b1d3406b042d5f238d69a9",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "33e178f563857b1be1ce32134c300648aebfc4af",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "30f7a39251fb740810abe9a44942b9858b13b102",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "7852ff1c171870a1fe43ce366799a00385572fd9",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "a5956eed4b4d8b3a73da8cf580f55a5b133e6baf",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "acce4d69b51d5d704c8ccaacecf12d3addfb45af",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
+        },
+        {
+          "commit": "f43219816d8600ec963371881a1467d22fa7b3e6",
+          "verdict": "rejected",
+          "rationale": "Merge commits are excluded by policy; their single-parent commits are decided individually.",
+          "risks": [
+            "Merging would bypass the per-commit review."
+          ],
+          "tests": [
+            "Inspected merge resolutions for changes that exist only in the merge."
+          ],
+          "reviewed_at": "2026-11-09T21:29:26Z"
         }
       ],
       "trust": "untrusted",

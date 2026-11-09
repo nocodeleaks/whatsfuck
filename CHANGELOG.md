@@ -22,6 +22,24 @@ All notable HyperMeow changes are documented here. HyperMeow uses commit pseudo-
   relationship-token reads. Callers must fence session ownership and maintain
   their own durable Signal state before enabling this mode.
 
+### Upstream sync (2026-11-09)
+
+Integrated the complete reviewed official WhatsMeow range `1eec113..f1b7985`
+and reviewed HyperMeow through `f432198`.
+
+- Official: protobufs `1052556849`, handshake and keepalive reconnect fixes,
+  app state rate-limit backoff and LTHash tolerance, synchronous `server_sync`
+  handling, contact removal mutations, grouped receipt variants, event handlers
+  called before acking undecryptable messages, and credential redaction in
+  `Node.String`.
+- HyperMeow, integrated: associated-child unwrapping, the opt-in shadow client,
+  opt-in socket racing and the native interactive and carousel builders.
+  `BuildBusinessNativeFlowButtonsMessage` now returns an `InteractiveMessage`
+  and `events.Message.UnwrapRaw` unwraps `AssociatedChildMessage`.
+- HyperMeow, not integrated: deferred AB props acknowledgements, remote Signal
+  keys, relaxed native list bounds and hydrated template buttons. See
+  `UPSTREAMS.lock.json` for each decision.
+
 ### Upstream sync
 
 Integrated the complete reviewed official WhatsMeow range `a23afe3..35ae409`
