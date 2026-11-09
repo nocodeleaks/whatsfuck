@@ -775,6 +775,10 @@ func (cli *Client) sendGroup(
 	timings *MessageDebugTimings,
 	extraParams nodeExtraParams,
 ) (string, []byte, error) {
+	if cli.isShadow() {
+		// A shadow would otherwise mint a sender key into the seeded snapshot.
+		return "", nil, ErrShadowGroupUnsupported
+	}
 	start := time.Now()
 	plaintext, _, err := marshalMessage(to, message)
 	timings.Marshal = time.Since(start)
@@ -954,6 +958,11 @@ func getTypeFromMessage(msg *waE2E.Message) string {
 			return "media"
 		}
 		return getTypeFromMessage(msg.DocumentWithCaptionMessage.Message)
+	case msg.GetAssociatedChildMessage().GetMessage() != nil:
+		// WhatsApp Web derives the stanza type from the unwrapped child
+		// (WAWebE2EProtoUtils typeAttributeFromProtobuf), so an HD dual-upload
+		// image child is sent as media rather than text.
+		return getTypeFromMessage(msg.AssociatedChildMessage.Message)
 	case msg.ReactionMessage != nil, msg.EncReactionMessage != nil:
 		return "reaction"
 	case msg.PollCreationMessage != nil, msg.PollUpdateMessage != nil:
@@ -984,6 +993,10 @@ func getMediaTypeFromMessage(msg *waE2E.Message) string {
 			return "button"
 		}
 		return getMediaTypeFromMessage(msg.DocumentWithCaptionMessage.Message)
+	case msg.GetAssociatedChildMessage().GetMessage() != nil:
+		// WAWebBackendJobsCommon recurses into associatedChildMessage when
+		// deriving the enc mediatype.
+		return getMediaTypeFromMessage(msg.AssociatedChildMessage.Message)
 	case msg.ExtendedTextMessage != nil && msg.ExtendedTextMessage.Title != nil:
 		return "url"
 	case msg.ImageMessage != nil:
@@ -1025,6 +1038,8 @@ func getMediaTypeFromMessage(msg *waE2E.Message) string {
 	}
 }
 
+// getButtonTypeFromMessage selects relay business metadata after following
+// ephemeral/view-once wrappers, or returns an empty string for other message forms.
 func getButtonTypeFromMessage(msg *waE2E.Message) string {
 	switch {
 	case msg.ViewOnceMessage != nil:
@@ -1259,6 +1274,8 @@ func (cli *Client) preparePeerMessageNode(
 	}, nil
 }
 
+// getMessageContent retains the supplied encrypted node and appends optional
+// device, poll, caller-supplied and business-format metadata for the relay.
 func (cli *Client) getMessageContent(
 	baseNode waBinary.Node,
 	message *waE2E.Message,
@@ -1535,6 +1552,11 @@ func (cli *Client) encryptMessageForDevice(
 	extraAttrs waBinary.Attrs,
 	existingSessions map[string]bool,
 ) (*waBinary.Node, bool, error) {
+	if cli.isShadow() {
+		// A headless client holds no live Signal session; delegate
+		// per-device encryption to the relay oracle.
+		return cli.shadowRelay.EncryptForDevice(ctx, plaintext, to, bundle, extraAttrs)
+	}
 	builder := session.NewBuilderFromSignal(cli.Store, to.SignalAddress(), pbSerializer)
 	if bundle != nil {
 		cli.Log.Debugf("Processing prekey bundle for %s", to)

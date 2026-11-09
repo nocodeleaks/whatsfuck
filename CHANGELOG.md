@@ -9,6 +9,11 @@ All notable HyperMeow changes are documented here. HyperMeow uses commit pseudo-
 
 ## [Unreleased]
 
+### Added
+
+- Opt-in concurrent WebSocket connections through `SocketConfig.RaceURLs`, with asynchronous loser cleanup. See [connection options](README.md#connection-options).
+- `Client.DisablePostConnectPassiveIQ` to skip the post-connect passive/active IQ when the login payload already declares an active connection.
+
 ### Direct message outage hooks
 
 - Added an optional pre-write guard after Signal state persistence and before a
@@ -16,6 +21,24 @@ All notable HyperMeow changes are documented here. HyperMeow uses commit pseudo-
 - Added an optional database-outage send signal that skips SQL-backed
   relationship-token reads. Callers must fence session ownership and maintain
   their own durable Signal state before enabling this mode.
+
+### Upstream sync (2026-11-09)
+
+Integrated the complete reviewed official WhatsMeow range `1eec113..f1b7985`
+and reviewed HyperMeow through `f432198`.
+
+- Official: protobufs `1052556849`, handshake and keepalive reconnect fixes,
+  app state rate-limit backoff and LTHash tolerance, synchronous `server_sync`
+  handling, contact removal mutations, grouped receipt variants, event handlers
+  called before acking undecryptable messages, and credential redaction in
+  `Node.String`.
+- HyperMeow, integrated: associated-child unwrapping, the opt-in shadow client,
+  opt-in socket racing and the native interactive and carousel builders.
+  `BuildBusinessNativeFlowButtonsMessage` now returns an `InteractiveMessage`
+  and `events.Message.UnwrapRaw` unwraps `AssociatedChildMessage`.
+- HyperMeow, not integrated: deferred AB props acknowledgements, remote Signal
+  keys, relaxed native list bounds and hydrated template buttons. See
+  `UPSTREAMS.lock.json` for each decision.
 
 ### Upstream sync
 
@@ -40,6 +63,14 @@ through 2026-09-21, preserving the previously adapted fork behavior. The
 - Reviewed all seven HyperMeow candidates through `07d103b`: their changes were
   already integrated or superseded. Recorded each decision without reapplying
   duplicate code or merging the HyperMeow branch.
+
+### Fixed
+
+- Sending a message wrapped in `AssociatedChildMessage` (for example the HD half of an image or video dual upload) now derives the stanza `type` and enc `mediatype` from the child, as WhatsApp Web does, so an HD image child is sent as `type="media"` with `mediatype="image"` instead of `type="text"`. Retry receipts use the same attributes.
+
+### Changed
+
+- `events.Message.UnwrapRaw` opens `AssociatedChildMessage`, as WhatsApp Web opens it as a future-proof wrapper, and sets the new `IsAssociatedChild` flag. The wrapper's `MessageContextInfo` (including `messageAssociation` and its parent key) is overlaid onto the child's context field by field, wrapper fields winning, as WhatsApp Web does; `RawMessage` is left unmodified. Consumers that inspected `Message.AssociatedChildMessage` after unwrapping must check `IsAssociatedChild` or `RawMessage` instead.
 
 ### Documentation
 

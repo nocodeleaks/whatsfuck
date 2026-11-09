@@ -146,6 +146,7 @@ type Client struct {
 
 	appStateProc     *appstate.Processor
 	appStateSyncLock sync.Mutex
+	appStateBackoff  map[appstate.WAPatchName]time.Time
 
 	historySyncNotifications        chan historySyncNotification
 	historySyncHandlerStarted       atomic.Bool
@@ -236,6 +237,11 @@ type Client struct {
 	// after decoding but before standard dispatch. See [RawNodeHandler].
 	RawNodeHandler RawNodeHandler
 
+	// shadowRelay, if non-nil, marks this client as a headless "shadow"
+	// client (see [NewShadowClient]): it has no socket, Connect is guarded,
+	// and outbound nodes plus Signal/keying oracle ops are delegated here.
+	shadowRelay ShadowRelay
+
 	// DisabledFeatures controls which built-in processing paths are
 	// skipped. See [DisabledFeatures].
 	DisabledFeatures DisabledFeatures
@@ -272,6 +278,11 @@ type Client struct {
 	// The user agent to use (for non-Messenger connections).
 	UserAgent        string
 	WebSocketHeaders http.Header
+	// DisablePostConnectPassiveIQ stops the library sending the
+	// `passive`/`active` IQ after a successful connect. Set it when the
+	// client payload already carries `passive: false`, which is what
+	// WhatsApp Web sends; the real client has no such IQ.
+	DisablePostConnectPassiveIQ bool
 }
 
 type groupMetaCache struct {
@@ -306,6 +317,15 @@ type SocketConfig struct {
 	URL                       string
 	Origin                    string
 	NoiseCertificateAuthority *[32]byte
+	// RaceURLs, when it has more than one entry, makes Connect open every
+	// URL concurrently and keep the one that connects first, closing the
+	// others with code 1000 and the reason "loser socket".
+	//
+	// Use socket.RaceURLs for the endpoints WhatsApp Web races
+	// (WAWebOpenSocket.js:10, 44-52). Loser cleanup runs asynchronously.
+	//
+	// Zero or one entry keeps the single-socket behavior and uses URL above.
+	RaceURLs []string
 }
 
 const handlerQueueSize = 256
@@ -360,6 +380,7 @@ func NewClient(deviceStore *store.Device, log waLog.Logger) *Client {
 		historySyncNotifications: make(chan historySyncNotification, 32),
 
 		GetMessageForRetry: func(requester, to types.JID, id types.MessageID) *waE2E.Message { return nil },
+		appStateBackoff:    make(map[appstate.WAPatchName]time.Time),
 
 		EnableAutoReconnect: true,
 		AutoTrustIdentity:   true,
@@ -567,10 +588,8 @@ func (cli *Client) Connect() error {
 }
 
 func isRetryableConnectError(err error) bool {
-	if exhttp.IsNetworkError(err) {
-		return true
-	}
-
+	// HTTP upgrade rejections take precedence over network failures from
+	// other racers. Joined errors preserve the configured endpoint order.
 	if statusErr, ok := errors.AsType[socket.ErrWithStatusCode](err); ok {
 		switch statusErr.StatusCode {
 		case 408, 500, 501, 502, 503, 504:
@@ -580,7 +599,12 @@ func isRetryableConnectError(err error) bool {
 		}
 	}
 
-	return errors.Is(err, socket.ErrDialFailed)
+	if exhttp.IsNetworkError(err) {
+		return true
+	}
+	return errors.Is(err, socket.ErrDialFailed) ||
+		errors.Is(err, ErrHandshakeTimeout) ||
+		errors.Is(err, socket.ErrSocketClosed)
 }
 
 func (cli *Client) ConnectContext(ctx context.Context) error {
@@ -631,6 +655,12 @@ func (cli *Client) connect(ctx context.Context) error {
 }
 
 func (cli *Client) unlockedConnect(ctx context.Context) error {
+	if cli.shadowRelay != nil {
+		// Guard: a shadow client must never open a socket. All Connect
+		// paths (Connect, ConnectContext, autoReconnect) funnel through
+		// here, so failing closed here blocks every one of them.
+		return ErrShadowClientNoConnect
+	}
 	if cli.Store.Deleted {
 		return store.ErrDeviceDeleted
 	}
@@ -656,6 +686,7 @@ func (cli *Client) unlockedConnect(ctx context.Context) error {
 		fs.HTTPHeaders.Set("Origin", cli.MessengerConfig.BaseURL)
 	}
 	maps.Copy(fs.HTTPHeaders, cli.WebSocketHeaders)
+	var raceURLs []string
 	if cli.SocketConfig != nil {
 		if cli.SocketConfig.URL != "" {
 			fs.URL = cli.SocketConfig.URL
@@ -663,12 +694,20 @@ func (cli *Client) unlockedConnect(ctx context.Context) error {
 		if cli.SocketConfig.Origin != "" {
 			fs.HTTPHeaders.Set("Origin", cli.SocketConfig.Origin)
 		}
+		raceURLs = cli.SocketConfig.RaceURLs
 	}
-	var queue chan *waBinary.Node
-	if err := fs.Connect(ctx); err != nil {
+	if len(raceURLs) > 1 {
+		raced, err := socket.ConnectRace(ctx, cli.Log.Sub("Socket"), client, raceURLs, fs.HTTPHeaders)
+		if err != nil {
+			return err
+		}
+		fs = raced
+	} else if err := fs.Connect(ctx); err != nil {
 		fs.Close(0)
 		return err
-	} else if queue, err = cli.doHandshake(fs, *keys.NewKeyPair()); err != nil {
+	}
+	queue, err := cli.doHandshake(fs, *keys.NewKeyPair())
+	if err != nil {
 		fs.Close(0)
 		return fmt.Errorf("noise handshake failed: %w", err)
 	}
@@ -1165,6 +1204,18 @@ func (cli *Client) sendNodeAndGetData(ctx context.Context, node waBinary.Node) (
 	sock := cli.socket
 	cli.socketLock.RUnlock()
 	if sock == nil {
+		// A headless (shadow) client has no socket by design; route the
+		// outbound node to its relay instead. Fail closed if there is
+		// neither a socket nor a relay so a write can never silently
+		// escape or nil-panic on the absent socket.
+		if cli.shadowRelay != nil {
+			payload, err := waBinary.Marshal(node)
+			if err != nil {
+				return nil, fmt.Errorf("failed to marshal node: %w", err)
+			}
+			cli.sendLog.Debugf("%s", &node)
+			return payload, cli.shadowRelay.SendNode(ctx, payload)
+		}
 		return nil, ErrNotConnected
 	}
 
@@ -1239,7 +1290,7 @@ func (cli *Client) ParseWebMessage(chatJID types.JID, webMsg *waWeb.WebMessageIn
 				return nil, ErrNotLoggedIn
 			}
 		}
-	} else if chatJID.Server == types.DefaultUserServer || chatJID.Server == types.HiddenUserServer || chatJID.Server == types.NewsletterServer {
+	} else if chatJID.Server == types.DefaultUserServer || chatJID.Server == types.HiddenUserServer || chatJID.Server == types.NewsletterServer || chatJID.Server == types.BotServer {
 		info.Sender = chatJID
 	} else if webMsg.GetParticipant() != "" {
 		info.Sender, err = types.ParseJID(webMsg.GetParticipant())

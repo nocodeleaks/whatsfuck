@@ -48,6 +48,9 @@ func (cli *Client) getServerPreKeyCount(ctx context.Context) (int, error) {
 }
 
 func (cli *Client) uploadPreKeys(ctx context.Context, initialUpload bool) {
+	if cli.isShadow() {
+		return
+	}
 	if cli.DisabledFeatures.Signal {
 		cli.Log.Debugf("Prekey upload skipped (DisabledFeatures.Signal)")
 		return
@@ -102,6 +105,16 @@ func (cli *Client) uploadPreKeys(ctx context.Context, initialUpload bool) {
 func (cli *Client) fetchPreKeysNoError(ctx context.Context, retryDevices []types.JID) map[types.JID]*prekey.Bundle {
 	if len(retryDevices) == 0 {
 		return nil
+	}
+	if cli.isShadow() {
+		// A headless client has no socket to run the prekey IQ; delegate to
+		// the relay oracle.
+		bundles, err := cli.shadowRelay.FetchPreKeys(ctx, retryDevices)
+		if err != nil {
+			cli.Log.Warnf("Failed to fetch prekeys for %v via relay: %v", retryDevices, err)
+			return nil
+		}
+		return bundles
 	}
 	bundlesResp, err := cli.fetchPreKeys(ctx, retryDevices)
 	if err != nil {

@@ -229,6 +229,9 @@ func (cli *Client) tryHandleRetryReceipt(ctx context.Context, receipt *events.Re
 
 // handleRetryReceipt handles an incoming retry receipt for an outgoing message.
 func (cli *Client) handleRetryReceipt(ctx context.Context, receipt *events.Receipt, node *waBinary.Node) error {
+	if cli.isShadow() && receipt.IsGroup {
+		return ErrShadowGroupUnsupported
+	}
 	retryChild, ok := node.GetOptionalChildByTag("retry")
 	if !ok {
 		return &ElementMissingError{Tag: "retry", In: "retry receipt"}
@@ -245,6 +248,9 @@ func (cli *Client) handleRetryReceipt(ctx context.Context, receipt *events.Recei
 		return err
 	} else if msg == nil {
 		return fmt.Errorf("couldn't find message %s", messageID)
+	}
+	if cli.isShadow() && msg.fb != nil {
+		return ErrShadowV3Unsupported
 	}
 	var fbConsumerMsg *waConsumerApplication.ConsumerApplication
 	if msg.fb != nil {

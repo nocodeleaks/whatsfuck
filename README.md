@@ -11,7 +11,7 @@ The review workflow is available through `scripts/upstream-review.sh`. It report
 
 ## HyperMeow candidates compared with upstream WhatsMeow
 
-This comparison was rechecked against upstream `main` at [`35ae409`](https://github.com/tulir/whatsmeow/commit/35ae40906e74b6235dab13b69bd15d845f2863d8) on 2026-09-22. The seven HyperMeow candidates through `07d103b` were already integrated or superseded; their individual decisions are recorded in `UPSTREAMS.lock.json`. These are review candidates, not trusted updates. Each candidate must pass the per-commit policy before integration, and each upstream sync must update this section when the difference changes.
+This comparison was rechecked against upstream `main` at [`f1b7985`](https://github.com/tulir/whatsmeow/commit/f1b798561919a9106f284e39078b39a57982625e) on 2026-11-09, with HyperMeow reviewed through [`f432198`](https://github.com/polymorfa/hypermeow/commit/f43219816d8600ec963371881a1467d22fa7b3e6). From that range the fork integrated the associated-child (HD media) handling, the opt-in headless shadow client, opt-in socket racing and the native interactive and carousel builders. Deferred AB props acknowledgements, remote Signal keys, relaxed native list bounds and hydrated template buttons remain under manual review; every decision is recorded in `UPSTREAMS.lock.json`. These are review candidates, not trusted updates. Each candidate must pass the per-commit policy before integration, and each upstream sync must update this section when the difference changes.
 
 | Area | HyperMeow advantage over upstream `main` |
 | --- | --- |
@@ -93,6 +93,45 @@ HyperMeow retains upstream's core support for:
 - retry receipts and message decryption recovery.
 
 New exported functionality is additive unless called out in the [changelog](CHANGELOG.md).
+
+## Connection options
+
+Connections use one WebSocket endpoint by default. To try both WhatsApp chat
+endpoints concurrently, configure the client before connecting:
+
+```go
+import (
+    whatsmeow "github.com/nocodeleaks/whatsfuck"
+    "github.com/nocodeleaks/whatsfuck/socket"
+)
+
+// client is an existing *whatsmeow.Client.
+client.SocketConfig = &whatsmeow.SocketConfig{
+    RaceURLs: append([]string(nil), socket.RaceURLs...),
+}
+```
+
+`SocketConfig.RaceURLs` activates racing when it contains at least two URLs.
+The first successful upgrade wins. Pending upgrades are canceled, and opened
+losers close asynchronously with status 1000 and reason `loser socket`.
+The winner proceeds without waiting for those close handshakes. If every
+endpoint fails, the returned error joins the failures in configured URL order.
+Initial background reconnect classification uses the first matching HTTP status
+in configured URL order, ahead of network errors from other endpoints. When no
+HTTP status is present, network and dial failures remain retryable. The existing
+single-endpoint retry rules remain unchanged.
+
+With zero or one race URL, the client uses `SocketConfig.URL`, or the default
+endpoint if `URL` is empty. With racing enabled, the list supplies the endpoints
+and `URL` is ignored. `SocketConfig.Origin` and `Client.WebSocketHeaders` apply to
+all racers. Repeated header values and empty entries that suppress defaults are
+preserved. Browsers control request headers on JS/WASM builds, as they do for
+single-endpoint connections.
+
+`Client.DisablePostConnectPassiveIQ` defaults to `false`. Set it to `true` only
+when your login payload already declares `passive: false`; the client then skips
+the post-connect passive/active IQ. This option does not change the login payload.
+Configure both options before connecting rather than while a connection is active.
 
 ## Discord
 

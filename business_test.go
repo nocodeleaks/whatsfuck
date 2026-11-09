@@ -793,6 +793,8 @@ func TestBusinessProductListDescriptionAndOrderTokenAreOptional(t *testing.T) {
 	}
 }
 
+// TestBuildBusinessListAndNativeFlowButtonsMatchWebGenerators checks list row
+// identity and the native InteractiveMessage envelope/version with quote context.
 func TestBuildBusinessListAndNativeFlowButtonsMatchWebGenerators(t *testing.T) {
 	list, err := BuildBusinessListMessage(BusinessListMessageParams{
 		Title: "Support", Description: "Choose a topic", ButtonText: "View topics", Footer: "Synthetic support",
@@ -806,13 +808,17 @@ func TestBuildBusinessListAndNativeFlowButtonsMatchWebGenerators(t *testing.T) {
 	}
 	buttons, err := BuildBusinessNativeFlowButtonsMessage(BusinessNativeFlowButtonsMessageParams{
 		Title: "Order help", Body: "Choose an action", Footer: "Synthetic support",
-		Buttons: []BusinessNativeFlowButton{{Name: "cta_url", ParamsJSON: `{"display_text":"Track order","url":"https://synthetic.invalid/order/o-100"}`}},
+		ContextInfo: &waE2E.ContextInfo{StanzaID: testPtr("quoted-message")},
+		Buttons:     []BusinessNativeFlowButton{{Name: "cta_url", ParamsJSON: `{"display_text":"Track order","url":"https://synthetic.invalid/order/o-100"}`}},
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	button := buttons.GetButtonsMessage().GetButtons()[0]
-	if button.GetType() != waE2E.ButtonsMessage_Button_NATIVE_FLOW || button.GetNativeFlowInfo().GetName() != "cta_url" {
+	if buttons.GetInteractiveMessage().GetContextInfo().GetStanzaID() != "quoted-message" {
+		t.Fatal("native-flow quote context was not preserved")
+	}
+	button := buttons.GetInteractiveMessage().GetNativeFlowMessage().GetButtons()[0]
+	if buttons.GetButtonsMessage() != nil || buttons.GetInteractiveMessage().GetNativeFlowMessage().GetMessageVersion() != 1 || button.GetName() != "cta_url" {
 		t.Fatalf("unexpected native-flow button: %#v", button)
 	}
 }
@@ -1125,6 +1131,8 @@ func TestBusinessMessageBuildersRejectUnsafeInputs(t *testing.T) {
 	}
 }
 
+// TestBusinessProductListAndNativeFlowTextLimits keeps product-list and native-flow
+// text ceilings independent by rejecting each overlong field on its own.
 func TestBusinessProductListAndNativeFlowTextLimits(t *testing.T) {
 	owner := types.NewJID("15550001", types.DefaultUserServer)
 	productList := BusinessProductListMessageParams{
@@ -1162,9 +1170,9 @@ func TestBusinessProductListAndNativeFlowTextLimits(t *testing.T) {
 		Buttons: []BusinessNativeFlowButton{{Name: "cta_url", ParamsJSON: `{}`}},
 	}
 	nativeMutations := map[string]func(*BusinessNativeFlowButtonsMessageParams){
-		"header": func(params *BusinessNativeFlowButtonsMessageParams) { params.Title = strings.Repeat("h", 61) },
-		"body":   func(params *BusinessNativeFlowButtonsMessageParams) { params.Body = strings.Repeat("b", 1025) },
-		"footer": func(params *BusinessNativeFlowButtonsMessageParams) { params.Footer = strings.Repeat("f", 61) },
+		"header": func(params *BusinessNativeFlowButtonsMessageParams) { params.Title = strings.Repeat("h", 257) },
+		"body":   func(params *BusinessNativeFlowButtonsMessageParams) { params.Body = strings.Repeat("b", 4097) },
+		"footer": func(params *BusinessNativeFlowButtonsMessageParams) { params.Footer = strings.Repeat("f", 257) },
 	}
 	for name, mutate := range nativeMutations {
 		t.Run("native flow "+name, func(t *testing.T) {
@@ -1856,5 +1864,44 @@ func TestBusinessCoverPhotoValidationAndNodes(t *testing.T) {
 	}
 	if _, err = buildBusinessCoverPhotoDeleteNode(""); err == nil {
 		t.Fatal("expected empty cover ID error")
+	}
+}
+
+// TestNativeButtonsWebConstraintsAndBusinessMetadata checks reply/CTA count and
+// mixing rules together with the relay metadata selected for each valid category.
+func TestNativeButtonsWebConstraintsAndBusinessMetadata(t *testing.T) {
+	reply := BusinessNativeFlowButton{Name: "quick_reply", ParamsJSON: `{"display_text":"Reply","id":"synthetic"}`}
+	url := BusinessNativeFlowButton{Name: "cta_url", ParamsJSON: `{"display_text":"Open","url":"https://example.com"}`}
+	copyButton := BusinessNativeFlowButton{Name: "cta_copy", ParamsJSON: `{"display_text":"Copy","copy_code":"synthetic"}`}
+	for _, tc := range []struct {
+		name     string
+		buttons  []BusinessNativeFlowButton
+		valid    bool
+		flowName string
+	}{
+		{"ten replies", []BusinessNativeFlowButton{reply, reply, reply, reply, reply, reply, reply, reply, reply, reply}, true, "mixed"},
+		{"eleven replies", []BusinessNativeFlowButton{reply, reply, reply, reply, reply, reply, reply, reply, reply, reply, reply}, false, ""},
+		{"three CTA", []BusinessNativeFlowButton{url, copyButton, url}, true, "mixed"},
+		{"four CTA", []BusinessNativeFlowButton{url, url, url, url}, false, ""},
+		{"reply with CTA", []BusinessNativeFlowButton{reply, url}, false, ""},
+		{"unsupported name", []BusinessNativeFlowButton{{Name: "unsupported", ParamsJSON: `{}`}}, false, ""},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg, err := BuildBusinessNativeFlowButtonsMessage(BusinessNativeFlowButtonsMessageParams{Body: "Choose", Buttons: tc.buttons})
+			if (err == nil) != tc.valid {
+				t.Fatalf("valid=%v error=%v", tc.valid, err)
+			}
+			if err != nil {
+				return
+			}
+			if got := getButtonTypeFromMessage(msg); got != "native_flow" {
+				t.Fatalf("transport kind=%s", got)
+			}
+			biz := buildNativeFlowBizNode(msg, 1)
+			interactive := biz.GetChildren()[0]
+			if interactive.Attrs["type"] != "native_flow" || interactive.GetChildren()[0].Attrs["name"] != tc.flowName {
+				t.Fatalf("wrong business metadata: %#v", biz)
+			}
+		})
 	}
 }
