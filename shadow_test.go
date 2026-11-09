@@ -112,6 +112,25 @@ func newTestShadow(t *testing.T, relay ShadowRelay) *Client {
 	return cli
 }
 
+// TestNewShadowClientRejectsNilInputs verifies the constructor fails loudly
+// on a nil relay (plain or typed nil) or a nil store, instead of handing back
+// a socket-capable non-shadow client.
+func TestNewShadowClientRejectsNilInputs(t *testing.T) {
+	expectPanic := func(name string, fn func()) {
+		t.Helper()
+		defer func() {
+			if recover() == nil {
+				t.Fatalf("%s: expected NewShadowClient to panic", name)
+			}
+		}()
+		fn()
+	}
+	expectPanic("nil relay", func() { NewShadowClient(&store.Device{}, nil, nil) })
+	var typedNil *fakeShadowRelay
+	expectPanic("typed-nil relay", func() { NewShadowClient(&store.Device{}, typedNil, nil) })
+	expectPanic("nil store", func() { NewShadowClient(nil, &fakeShadowRelay{}, nil) })
+}
+
 // TestNewShadowClientHandlesSameTagsAsNormalClient verifies the shadow is a
 // real *Client that dispatches the same stanza tags as a normal client.
 func TestNewShadowClientHandlesSameTagsAsNormalClient(t *testing.T) {
