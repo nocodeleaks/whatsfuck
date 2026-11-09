@@ -45,6 +45,10 @@ through 2026-09-21, preserving the previously adapted fork behavior. The
 
 - Sending a message wrapped in `AssociatedChildMessage` (for example the HD half of an image or video dual upload) now derives the stanza `type` and enc `mediatype` from the child, as WhatsApp Web does, so an HD image child is sent as `type="media"` with `mediatype="image"` instead of `type="text"`. Retry receipts use the same attributes.
 
+### Changed
+
+- `events.Message.UnwrapRaw` opens `AssociatedChildMessage`, as WhatsApp Web opens it as a future-proof wrapper, and sets the new `IsAssociatedChild` flag. The outer `MessageContextInfo` (including `messageAssociation` and its parent key) is copied onto the child when the child has none. Consumers that inspected `Message.AssociatedChildMessage` after unwrapping must check `IsAssociatedChild` or `RawMessage` instead.
+
 ### Documentation
 
 - Added an evidence-backed comparison with upstream WhatsMeow.
