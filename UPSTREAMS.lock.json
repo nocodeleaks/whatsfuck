@@ -1,14 +1,14 @@
 {
   "schema_version": 2,
   "integration_repository": "github.com/nocodeleaks/whatsfuck",
-  "reviewed_at": "2026-10-27T12:53:29Z",
+  "reviewed_at": "2026-11-09T21:11:44Z",
   "sources": {
     "official": {
       "remote": "official",
       "repository": "github.com/tulir/whatsmeow",
       "branch": "main",
-      "integrated_commit": "1eec1136a50b2ef148b05f1819e77a9d989e0457",
-      "observed_commit": "1eec1136a50b2ef148b05f1819e77a9d989e0457",
+      "integrated_commit": "f1b798561919a9106f284e39078b39a57982625e",
+      "observed_commit": "f1b798561919a9106f284e39078b39a57982625e",
       "trust": "authoritative",
       "integration_strategy": "reviewed-range-merge",
       "role": "WhatsApp protocol compatibility"
