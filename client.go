@@ -588,10 +588,8 @@ func (cli *Client) Connect() error {
 }
 
 func isRetryableConnectError(err error) bool {
-	if exhttp.IsNetworkError(err) {
-		return true
-	}
-
+	// HTTP upgrade rejections take precedence over network failures from
+	// other racers. Joined errors preserve the configured endpoint order.
 	if statusErr, ok := errors.AsType[socket.ErrWithStatusCode](err); ok {
 		switch statusErr.StatusCode {
 		case 408, 500, 501, 502, 503, 504:
@@ -601,6 +599,9 @@ func isRetryableConnectError(err error) bool {
 		}
 	}
 
+	if exhttp.IsNetworkError(err) {
+		return true
+	}
 	return errors.Is(err, socket.ErrDialFailed) ||
 		errors.Is(err, ErrHandshakeTimeout) ||
 		errors.Is(err, socket.ErrSocketClosed)
