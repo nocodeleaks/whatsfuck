@@ -34,9 +34,12 @@ var ErrNilNode = errors.New("cannot inject nil node")
 // ErrShadowGroupUnsupported is returned when a headless shadow client is asked
 // to encrypt or decrypt group (sender-key) traffic. The relay oracle covers
 // direct-message cryptography only; a shadow must never create or hold sender
-// keys locally, so group paths fail closed instead of silently using the seeded
-// snapshot's Signal stores.
+// keys locally, so group paths fail closed.
 var ErrShadowGroupUnsupported = errors.New("shadow client does not process group (sender-key) traffic; the relay covers direct messages only")
+
+// ErrShadowV3Unsupported prevents V3 paths from advancing a local Signal ratchet.
+// The relay contract supports the existing direct-message encryption format only.
+var ErrShadowV3Unsupported = errors.New("shadow client does not support version-3 message encryption")
 
 // ShadowRelay is the pluggable backend that a headless ("shadow") [Client]
 // delegates real-session work to.
@@ -102,6 +105,9 @@ type ShadowRelay interface {
 	GetPrivacyToken(ctx context.Context, user types.JID) (*store.PrivacyToken, error)
 }
 
+// NewShadowClient takes ownership of deviceStore. Do not share it with another
+// Client or another NewShadowClient call.
+//
 // NewShadowClient constructs a headless [Client] driven by injected nodes and
 // a pluggable [ShadowRelay], for embedding whatsmeow's protocol handling
 // without a live socket.
@@ -252,7 +258,11 @@ func (s *shadowLIDStore) GetManyLIDsForPNs(ctx context.Context, pns []types.JID)
 		if _, ok := res[pn]; ok {
 			continue
 		}
-		if lid, err := s.relay.ResolveLID(ctx, pn); err == nil && !lid.IsEmpty() {
+		lid, err := s.relay.ResolveLID(ctx, pn)
+		if err != nil {
+			return nil, err
+		}
+		if !lid.IsEmpty() {
 			res[pn] = lid
 		}
 	}

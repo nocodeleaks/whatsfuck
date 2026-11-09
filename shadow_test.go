@@ -34,7 +34,8 @@ type fakeShadowRelay struct {
 	resolveLIDCalls  int
 	privacyCalls     int
 
-	sendErr error
+	sendErr    error
+	resolveErr error
 }
 
 func (f *fakeShadowRelay) SendNode(ctx context.Context, nodeData []byte) error {
@@ -83,7 +84,7 @@ func (f *fakeShadowRelay) ResolveLID(ctx context.Context, pn types.JID) (types.J
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	f.resolveLIDCalls++
-	return types.EmptyJID, nil
+	return types.EmptyJID, f.resolveErr
 }
 
 func (f *fakeShadowRelay) GetPrivacyToken(ctx context.Context, user types.JID) (*store.PrivacyToken, error) {
@@ -297,5 +298,31 @@ func TestShadowGenerateIDsWork(t *testing.T) {
 	}
 	if shadow.DangerousInternals().GenerateRequestID() == "" {
 		t.Fatal("GenerateRequestID returned empty string")
+	}
+}
+
+func TestShadowRejectsLocalKeyMutationPaths(t *testing.T) {
+	ctx := context.Background()
+	cli := &Client{shadowRelay: &fakeShadowRelay{}}
+	// No local store exists: every path must return before touching credentials.
+	if _, err := cli.SendFBMessage(ctx, types.EmptyJID, nil, nil); !errors.Is(err, ErrShadowV3Unsupported) {
+		t.Fatalf("FB send: %v", err)
+	}
+	if _, err := cli.encryptMessageForDeviceV3(ctx, nil, nil, nil, types.EmptyJID, nil, nil); !errors.Is(err, ErrShadowV3Unsupported) {
+		t.Fatalf("V3 encryption: %v", err)
+	}
+	if err := cli.handleRetryReceipt(ctx, &events.Receipt{MessageSource: types.MessageSource{IsGroup: true}}, nil); !errors.Is(err, ErrShadowGroupUnsupported) {
+		t.Fatalf("group retry: %v", err)
+	}
+	cli.handleSenderKeyDistributionMessage(ctx, types.EmptyJID, types.EmptyJID, nil)
+	cli.uploadPreKeys(ctx, false)
+}
+func TestShadowManyLIDsPropagatesRelayFailure(t *testing.T) {
+	expected := errors.New("relay unavailable")
+	relay := &fakeShadowRelay{resolveErr: expected}
+	s := &shadowLIDStore{relay: relay}
+	result, err := s.GetManyLIDsForPNs(context.Background(), []types.JID{types.NewJID("123", types.DefaultUserServer)})
+	if !errors.Is(err, expected) || result != nil {
+		t.Fatalf("resolution = %v, %v", result, err)
 	}
 }

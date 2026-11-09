@@ -48,6 +48,9 @@ func (cli *Client) getServerPreKeyCount(ctx context.Context) (int, error) {
 }
 
 func (cli *Client) uploadPreKeys(ctx context.Context, initialUpload bool) {
+	if cli.isShadow() {
+		return
+	}
 	if cli.DisabledFeatures.Signal {
 		cli.Log.Debugf("Prekey upload skipped (DisabledFeatures.Signal)")
 		return
