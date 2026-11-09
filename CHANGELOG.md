@@ -47,7 +47,7 @@ through 2026-09-21, preserving the previously adapted fork behavior. The
 
 ### Changed
 
-- `events.Message.UnwrapRaw` opens `AssociatedChildMessage`, as WhatsApp Web opens it as a future-proof wrapper, and sets the new `IsAssociatedChild` flag. The outer `MessageContextInfo` (including `messageAssociation` and its parent key) is copied onto the child when the child has none. Consumers that inspected `Message.AssociatedChildMessage` after unwrapping must check `IsAssociatedChild` or `RawMessage` instead.
+- `events.Message.UnwrapRaw` opens `AssociatedChildMessage`, as WhatsApp Web opens it as a future-proof wrapper, and sets the new `IsAssociatedChild` flag. The wrapper's `MessageContextInfo` (including `messageAssociation` and its parent key) is overlaid onto the child's context field by field, wrapper fields winning, as WhatsApp Web does; `RawMessage` is left unmodified. Consumers that inspected `Message.AssociatedChildMessage` after unwrapping must check `IsAssociatedChild` or `RawMessage` instead.
 
 ### Documentation
 
